@@ -6,8 +6,11 @@ namespace Staybnb.ViewModels.Host
     public class CheckInStepDto
     {
         public int StepNumber { get; set; }
+        public int Step { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Instruction { get; set; } = string.Empty;
+
+        public int DisplayStep => StepNumber > 0 ? StepNumber : (Step > 0 ? Step : 1);
     }
 
     public class CheckInProcessViewModel

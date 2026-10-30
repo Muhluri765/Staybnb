@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -13,12 +14,27 @@ using Staybnb.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Configure Database Connection (SQL Server)
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
-    ?? "Server=(localdb)\\mssqllocaldb;Database=StaybnbDb;Trusted_Connection=True;MultipleActiveResultSets=true";
+// 1. Configure Database Connection (SQL Server on Windows / production, SQLite on macOS / cross-platform development)
+var configuredProvider = builder.Configuration.GetValue<string>("DatabaseProvider");
+bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+string selectedProvider = !string.IsNullOrEmpty(configuredProvider) 
+    ? configuredProvider 
+    : (isWindows ? "SqlServer" : "Sqlite");
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+if (selectedProvider.Equals("SqlServer", StringComparison.OrdinalIgnoreCase))
+{
+    var sqlConn = builder.Configuration.GetConnectionString("DefaultConnection") 
+        ?? "Server=(localdb)\\mssqllocaldb;Database=StaybnbDb;Trusted_Connection=True;MultipleActiveResultSets=true";
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlServer(sqlConn));
+}
+else
+{
+    var sqliteConn = builder.Configuration.GetConnectionString("SqliteConnection") 
+        ?? "Data Source=staybnb.db";
+    builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlite(sqliteConn));
+}
 
 // 2. Configure ASP.NET Core Identity with ApplicationUser & IdentityRole
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
@@ -90,7 +106,6 @@ else
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();

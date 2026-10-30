@@ -64,11 +64,16 @@ namespace Staybnb.Controllers
                 .Where(p => p.Status == PaymentStatus.Completed)
                 .SumAsync(p => p.Amount);
 
+            // Explicitly query Approved Hosts count via UserManager
+            var hostsList = await _userManager.GetUsersInRoleAsync("Host");
+
             var viewModel = new AdminDashboardViewModel
             {
                 PendingApplicationsCount = pendingApps.Count,
                 TotalUsersCount = await _userManager.Users.CountAsync(),
+                ActivePropertiesCount = await _context.HostProperties.CountAsync(p => p.IsActive),
                 TotalPropertiesCount = await _context.HostProperties.CountAsync(),
+                ApprovedHostsCount = hostsList.Count,
                 TotalBookingsCount = await _context.Bookings.CountAsync(),
                 PlatformRevenue = totalRevenue,
                 PendingApplications = pendingApps,
@@ -184,7 +189,7 @@ namespace Staybnb.Controllers
             _context.ActivityLogs.Add(new ActivityLog
             {
                 UserId = adminId!,
-                Action = $"Approved Host Application #{application.Id} for {user.FullName}. Listing '{application.Property?.Title}' activated.",
+                Action = $"Approved Host App #{application.Id} for {user.FullName}. Listing '{application.Property?.Title}' active.".Truncate(100),
                 ActivityType = "AdminReview",
                 CreatedAt = DateTime.UtcNow
             });
@@ -192,7 +197,7 @@ namespace Staybnb.Controllers
             _context.ActivityLogs.Add(new ActivityLog
             {
                 UserId = user.Id,
-                Action = "Role transitioned from Guest to Host (Mutual Exclusivity Enforced)",
+                Action = "Role transitioned from Guest to Host (Mutual Exclusivity Enforced)".Truncate(100),
                 ActivityType = "RoleChange",
                 CreatedAt = DateTime.UtcNow
             });
@@ -201,7 +206,7 @@ namespace Staybnb.Controllers
             _context.Notifications.Add(new Notification
             {
                 UserId = user.Id,
-                Title = $"Congratulations! Your Host Application for '{application.Property?.Title}' has been approved.",
+                Title = $"Host App Approved for '{application.Property?.Title}'".Truncate(100),
                 Type = "ApplicationApproval",
                 CreatedAt = DateTime.UtcNow,
                 IsRead = false
@@ -240,7 +245,7 @@ namespace Staybnb.Controllers
             _context.ActivityLogs.Add(new ActivityLog
             {
                 UserId = adminId!,
-                Action = $"Rejected Host Application #{application.Id} for {application.ApplicationUser?.FullName}",
+                Action = $"Rejected Host Application #{application.Id} for {application.ApplicationUser?.FullName}".Truncate(100),
                 ActivityType = "AdminReview",
                 CreatedAt = DateTime.UtcNow
             });
@@ -248,7 +253,7 @@ namespace Staybnb.Controllers
             _context.Notifications.Add(new Notification
             {
                 UserId = application.ApplicationUserId,
-                Title = $"Host Application Declined: {application.AdminNotes}",
+                Title = $"Host Application Declined: {application.AdminNotes}".Truncate(100),
                 Type = "ApplicationRejection",
                 CreatedAt = DateTime.UtcNow,
                 IsRead = false
@@ -348,7 +353,7 @@ namespace Staybnb.Controllers
                 _context.ActivityLogs.Add(new ActivityLog
                 {
                     UserId = superAdminId!,
-                    Action = $"SuperAdmin promoted {targetUser.FullName} ({targetUser.Email}) to Admin role",
+                    Action = $"SuperAdmin promoted {targetUser.FullName} ({targetUser.Email}) to Admin role".Truncate(100),
                     ActivityType = "RolePromotion",
                     CreatedAt = DateTime.UtcNow
                 });
@@ -356,7 +361,7 @@ namespace Staybnb.Controllers
                 _context.Notifications.Add(new Notification
                 {
                     UserId = targetUser.Id,
-                    Title = "Privilege Update: You have been promoted to Platform Administrator.",
+                    Title = "Privilege Update: You have been promoted to Platform Administrator.".Truncate(100),
                     Type = "AdminPromotion",
                     CreatedAt = DateTime.UtcNow,
                     IsRead = false
@@ -396,7 +401,7 @@ namespace Staybnb.Controllers
                 _context.ActivityLogs.Add(new ActivityLog
                 {
                     UserId = superAdminId!,
-                    Action = $"SuperAdmin demoted {targetUser.FullName} ({targetUser.Email}) from Admin role",
+                    Action = $"SuperAdmin demoted {targetUser.FullName} ({targetUser.Email}) from Admin role".Truncate(100),
                     ActivityType = "RoleDemotion",
                     CreatedAt = DateTime.UtcNow
                 });
@@ -404,7 +409,7 @@ namespace Staybnb.Controllers
                 _context.Notifications.Add(new Notification
                 {
                     UserId = targetUser.Id,
-                    Title = "Privilege Update: Admin privileges have been removed.",
+                    Title = "Privilege Update: Admin privileges have been removed.".Truncate(100),
                     Type = "AdminDemotion",
                     CreatedAt = DateTime.UtcNow,
                     IsRead = false

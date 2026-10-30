@@ -113,7 +113,8 @@ namespace Staybnb.Controllers
             }
 
             // 2. Save uploaded photos locally to wwwroot/uploads/properties/
-            var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "properties");
+            var rootPath = _webHostEnvironment.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            var uploadsFolder = Path.Combine(rootPath, "uploads", "properties");
             if (!Directory.Exists(uploadsFolder))
             {
                 Directory.CreateDirectory(uploadsFolder);
@@ -148,7 +149,7 @@ namespace Staybnb.Controllers
 
             property.CheckInProcess = new CheckInProcess
             {
-                Title = $"{property.Title} Check-in Guide",
+                Title = $"{property.Title} Check-in Guide".Truncate(200),
                 StepsJson = JsonSerializer.Serialize(defaultSteps),
                 CreatedAt = DateTime.UtcNow
             };
@@ -170,7 +171,7 @@ namespace Staybnb.Controllers
             _context.ActivityLogs.Add(new ActivityLog
             {
                 UserId = userId,
-                Action = $"Submitted Host Application for listing '{property.Title}'",
+                Action = $"Submitted Host Application for listing '{property.Title}'".Truncate(100),
                 ActivityType = "HostApplication",
                 CreatedAt = DateTime.UtcNow
             });
@@ -178,7 +179,7 @@ namespace Staybnb.Controllers
             _context.Notifications.Add(new Notification
             {
                 UserId = userId,
-                Title = "Host Application Submitted: Under Review by Admins",
+                Title = "Host Application Submitted: Under Review by Admins".Truncate(100),
                 Type = "Application",
                 CreatedAt = DateTime.UtcNow,
                 IsRead = false
@@ -287,7 +288,7 @@ namespace Staybnb.Controllers
             _context.ActivityLogs.Add(new ActivityLog
             {
                 UserId = userId!,
-                Action = $"Toggled listing '{property.Title}' to {(property.IsActive ? "Active" : "Inactive")}",
+                Action = $"Toggled listing '{property.Title}' to {(property.IsActive ? "Active" : "Inactive")}".Truncate(100),
                 ActivityType = "Listing",
                 CreatedAt = DateTime.UtcNow
             });
@@ -359,7 +360,7 @@ namespace Staybnb.Controllers
             _context.Notifications.Add(new Notification
             {
                 UserId = booking.GuestId,
-                Title = $"Booking Approved! Your stay at '{booking.Property?.Title}' is confirmed.",
+                Title = $"Booking Confirmed for '{booking.Property?.Title}'".Truncate(100),
                 Type = "Booking",
                 CreatedAt = DateTime.UtcNow,
                 IsRead = false
@@ -369,7 +370,7 @@ namespace Staybnb.Controllers
             _context.ActivityLogs.Add(new ActivityLog
             {
                 UserId = userId!,
-                Action = $"Approved Booking #{booking.Id} for {booking.Guest?.FullName}",
+                Action = $"Approved Booking #{booking.Id} for {booking.Guest?.FullName}".Truncate(100),
                 ActivityType = "Booking",
                 CreatedAt = DateTime.UtcNow
             });
@@ -403,7 +404,7 @@ namespace Staybnb.Controllers
             _context.Notifications.Add(new Notification
             {
                 UserId = booking.GuestId,
-                Title = $"Booking Request Declined for '{booking.Property?.Title}'.",
+                Title = $"Booking Request Declined for '{booking.Property?.Title}'".Truncate(100),
                 Type = "Booking",
                 CreatedAt = DateTime.UtcNow,
                 IsRead = false
@@ -413,7 +414,7 @@ namespace Staybnb.Controllers
             _context.ActivityLogs.Add(new ActivityLog
             {
                 UserId = userId!,
-                Action = $"Declined Booking #{booking.Id}",
+                Action = $"Declined Booking #{booking.Id}".Truncate(100),
                 ActivityType = "Booking",
                 CreatedAt = DateTime.UtcNow
             });
@@ -489,7 +490,7 @@ namespace Staybnb.Controllers
             _context.ActivityLogs.Add(new ActivityLog
             {
                 UserId = userId!,
-                Action = $"Updated Check-in process for '{property.Title}'",
+                Action = $"Updated Check-in process for '{property.Title}'".Truncate(100),
                 ActivityType = "CheckIn",
                 CreatedAt = DateTime.UtcNow
             });
@@ -561,7 +562,7 @@ namespace Staybnb.Controllers
             _context.Notifications.Add(new Notification
             {
                 UserId = checkIn.Booking!.GuestId,
-                Title = $"Check-in Verified & Approved! Welcome to '{checkIn.Booking.Property?.Title}'",
+                Title = $"Check-in Verified & Approved for '{checkIn.Booking.Property?.Title}'".Truncate(100),
                 Type = "CheckIn",
                 CreatedAt = DateTime.UtcNow,
                 IsRead = false
@@ -571,7 +572,7 @@ namespace Staybnb.Controllers
             _context.ActivityLogs.Add(new ActivityLog
             {
                 UserId = userId!,
-                Action = $"Verified ID and Approved Check-in #{checkIn.Id} for {checkIn.Booking.Guest?.FullName}",
+                Action = $"Verified ID & Approved Check-in #{checkIn.Id} for {checkIn.Booking.Guest?.FullName}".Truncate(100),
                 ActivityType = "CheckIn",
                 CreatedAt = DateTime.UtcNow
             });
@@ -614,7 +615,7 @@ namespace Staybnb.Controllers
             _context.Notifications.Add(new Notification
             {
                 UserId = checkIn.Booking!.GuestId,
-                Title = $"Check-in Verification Rejected: {checkIn.HostRemarks}",
+                Title = $"Check-in Verification Declined: {checkIn.HostRemarks}".Truncate(100),
                 Type = "CheckIn",
                 CreatedAt = DateTime.UtcNow,
                 IsRead = false
@@ -623,7 +624,7 @@ namespace Staybnb.Controllers
             _context.ActivityLogs.Add(new ActivityLog
             {
                 UserId = userId!,
-                Action = $"Rejected Check-in #{checkIn.Id} for {checkIn.Booking.Guest?.FullName}",
+                Action = $"Rejected Check-in #{checkIn.Id} for {checkIn.Booking.Guest?.FullName}".Truncate(100),
                 ActivityType = "CheckIn",
                 CreatedAt = DateTime.UtcNow
             });

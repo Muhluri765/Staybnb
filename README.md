@@ -86,9 +86,11 @@ All 15 required entities are configured with exact keys, data types, and cascade
 ### Option A: Using .NET CLI
 ```bash
 cd Staybnb
-dotnet run
+~/.dotnet/dotnet run
 ```
-Navigate to: `https://localhost:5001` or `http://localhost:5000`
+Navigate to: **`http://localhost:5248`**
+
+> **Note for macOS:** On macOS, the operating system's AirPlay Receiver (Control Center) reserves port 5000 by default. Staybnb is configured to run on port **`5248`** in [`Properties/launchSettings.json`](file:///Users/muhluri/Documents/Richfield/PRO%20742/Staybnb/Properties/launchSettings.json) to eliminate conflicts. Additionally, Staybnb includes cross-platform database support: it automatically uses local SQLite (`staybnb.db`) on macOS, and SQL Server (`(localdb)\mssqllocaldb`) on Windows.
 
 ### Option B: Using Visual Studio 2022
 1. Open the folder or `.csproj` in Visual Studio.

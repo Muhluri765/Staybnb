@@ -28,24 +28,13 @@
         </div>
     </div>
 
-    <!-- Metrics Cards -->
-    <div class="row row-cols-1 row-cols-md-5 g-3 mb-4">
-        <div class="col">
-            <div class="stat-card">
-                <div>
-                    <div class="text-muted small fw-semibold">Pending Apps</div>
-                    <div class="fs-3 fw-bold text-danger">@Model.PendingApplicationsCount</div>
-                </div>
-                <div class="stat-icon bg-light text-danger">
-                    <i class="bi bi-inbox-fill"></i>
-                </div>
-            </div>
-        </div>
+    <!-- Metrics Cards (6 Standard Rubric KPIs) -->
+    <div class="row row-cols-1 row-cols-md-3 row-cols-xl-6 g-3 mb-4">
         <div class="col">
             <div class="stat-card">
                 <div>
                     <div class="text-muted small fw-semibold">Total Users</div>
-                    <div class="fs-3 fw-bold text-dark">@Model.TotalUsersCount</div>
+                    <div class="fs-4 fw-bold text-dark">@Model.TotalUsersCount</div>
                 </div>
                 <div class="stat-icon bg-light text-primary">
                     <i class="bi bi-people-fill"></i>
@@ -55,19 +44,41 @@
         <div class="col">
             <div class="stat-card">
                 <div>
-                    <div class="text-muted small fw-semibold">Properties</div>
-                    <div class="fs-3 fw-bold text-dark">@Model.TotalPropertiesCount</div>
+                    <div class="text-muted small fw-semibold">Pending Apps</div>
+                    <div class="fs-4 fw-bold text-danger">@Model.PendingApplicationsCount</div>
                 </div>
-                <div class="stat-icon bg-light text-success">
-                    <i class="bi bi-buildings-fill"></i>
+                <div class="stat-icon bg-light text-danger">
+                    <i class="bi bi-inbox-fill"></i>
                 </div>
             </div>
         </div>
         <div class="col">
             <div class="stat-card">
                 <div>
-                    <div class="text-muted small fw-semibold">Bookings</div>
-                    <div class="fs-3 fw-bold text-dark">@Model.TotalBookingsCount</div>
+                    <div class="text-muted small fw-semibold">Active Properties</div>
+                    <div class="fs-4 fw-bold text-success">@Model.ActivePropertiesCount</div>
+                </div>
+                <div class="stat-icon bg-light text-success">
+                    <i class="bi bi-building-check"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="stat-card">
+                <div>
+                    <div class="text-muted small fw-semibold">Approved Hosts</div>
+                    <div class="fs-4 fw-bold text-primary">@Model.ApprovedHostsCount</div>
+                </div>
+                <div class="stat-icon bg-light text-primary">
+                    <i class="bi bi-person-badge-fill"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="stat-card">
+                <div>
+                    <div class="text-muted small fw-semibold">Total Bookings</div>
+                    <div class="fs-4 fw-bold text-info">@Model.TotalBookingsCount</div>
                 </div>
                 <div class="stat-icon bg-light text-info">
                     <i class="bi bi-calendar2-check-fill"></i>
@@ -77,8 +88,8 @@
         <div class="col">
             <div class="stat-card">
                 <div>
-                    <div class="text-muted small fw-semibold">Platform Volume</div>
-                    <div class="fs-3 fw-bold text-warning">R @Model.PlatformRevenue.ToString("N0")</div>
+                    <div class="text-muted small fw-semibold">Platform Revenue</div>
+                    <div class="fs-4 fw-bold text-warning">R @Model.PlatformRevenue.ToString("N0")</div>
                 </div>
                 <div class="stat-icon bg-light text-warning">
                     <i class="bi bi-cash-coin"></i>

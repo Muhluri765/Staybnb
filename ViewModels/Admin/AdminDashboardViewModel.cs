@@ -7,7 +7,9 @@ namespace Staybnb.ViewModels.Admin
     {
         public int PendingApplicationsCount { get; set; }
         public int TotalUsersCount { get; set; }
+        public int ActivePropertiesCount { get; set; }
         public int TotalPropertiesCount { get; set; }
+        public int ApprovedHostsCount { get; set; }
         public int TotalBookingsCount { get; set; }
         public decimal PlatformRevenue { get; set; }
 

@@ -63,9 +63,44 @@
             <!-- Check-in Guide & Steps -->
             <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
                 <h5 class="fw-bold mb-3"><i class="bi bi-signpost-2 text-primary me-2"></i> @Model.ProcessTitle</h5>
-                <div class="p-3 bg-light rounded-3 text-secondary small font-monospace mb-3" style="white-space: pre-line;">
-                    @Model.ProcessStepsJson
-                </div>
+                
+                @{
+                    var parsedSteps = new List<CheckInStepDto>();
+                    try
+                    {
+                        if (!string.IsNullOrWhiteSpace(Model.ProcessStepsJson))
+                        {
+                            parsedSteps = System.Text.Json.JsonSerializer.Deserialize<List<CheckInStepDto>>(
+                                Model.ProcessStepsJson,
+                                new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                            ) ?? new List<CheckInStepDto>();
+                        }
+                    }
+                    catch { /* Fallback to raw text representation */ }
+                }
+
+                @if (parsedSteps.Any())
+                {
+                    <div class="d-flex flex-column gap-3 mb-3">
+                        @foreach (var s in parsedSteps)
+                        {
+                            <div class="d-flex align-items-start gap-3 p-3 rounded-3 bg-light border">
+                                <span class="badge bg-dark rounded-circle px-2 py-1 fs-6 flex-shrink-0" style="width: 32px; height: 32px; line-height: 20px;">@s.DisplayStep</span>
+                                <div>
+                                    <div class="fw-bold text-dark">@s.Title</div>
+                                    <div class="small text-secondary mt-1">@s.Instruction</div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="p-3 bg-light rounded-3 text-secondary small font-monospace mb-3" style="white-space: pre-line;">
+                        @Model.ProcessStepsJson
+                    </div>
+                }
+
                 <div class="text-muted small">
                     <i class="bi bi-info-circle me-1"></i> Once your ID is verified by @Model.HostName, complete arrival access instructions and lockbox combinations will be activated.
                 </div>

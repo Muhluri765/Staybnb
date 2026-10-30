@@ -166,7 +166,7 @@ namespace Staybnb.Controllers
             _context.ActivityLogs.Add(new ActivityLog
             {
                 UserId = guestId,
-                Action = $"Created Booking #{booking.Id} for '{property.Title}' (Total: R{calculatedTotalPrice:N2})",
+                Action = $"Created Booking #{booking.Id} for '{property.Title}' (Total: R{calculatedTotalPrice:N2})".Truncate(100),
                 ActivityType = "Booking",
                 CreatedAt = DateTime.UtcNow
             });
@@ -175,7 +175,7 @@ namespace Staybnb.Controllers
             _context.Notifications.Add(new Notification
             {
                 UserId = property.HostId,
-                Title = $"New Booking Request #{booking.Id} received for '{property.Title}'.",
+                Title = $"New Booking Request #{booking.Id} for '{property.Title}'".Truncate(100),
                 Type = "BookingRequest",
                 CreatedAt = DateTime.UtcNow,
                 IsRead = false
@@ -184,7 +184,7 @@ namespace Staybnb.Controllers
             _context.Notifications.Add(new Notification
             {
                 UserId = guestId,
-                Title = $"Booking #{booking.Id} submitted and payment processed. Awaiting Host confirmation.",
+                Title = $"Booking #{booking.Id} confirmed. Payment received, awaiting host review.".Truncate(100),
                 Type = "BookingSubmitted",
                 CreatedAt = DateTime.UtcNow,
                 IsRead = false
@@ -196,6 +196,8 @@ namespace Staybnb.Controllers
         }
 
         // GET: /Booking/Confirmation/5
+        [HttpGet]
+        [Authorize(Roles = "Guest")]
         public async Task<IActionResult> Confirmation(int id)
         {
             var guestId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -215,6 +217,8 @@ namespace Staybnb.Controllers
         }
 
         // GET: /Booking/MyBookings
+        [HttpGet]
+        [Authorize(Roles = "Guest")]
         public async Task<IActionResult> MyBookings()
         {
             var guestId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -331,7 +335,8 @@ namespace Staybnb.Controllers
             }
 
             // Save document locally to wwwroot/uploads/documents/
-            var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "documents");
+            var rootPath = _webHostEnvironment.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            var uploadsFolder = Path.Combine(rootPath, "uploads", "documents");
             if (!Directory.Exists(uploadsFolder))
             {
                 Directory.CreateDirectory(uploadsFolder);
@@ -364,7 +369,7 @@ namespace Staybnb.Controllers
             _context.ActivityLogs.Add(new ActivityLog
             {
                 UserId = guestId!,
-                Action = $"Uploaded check-in verification document ({model.DocumentType}) for Booking #{booking.Id}",
+                Action = $"Uploaded ID verification document ({model.DocumentType}) for Booking #{booking.Id}".Truncate(100),
                 ActivityType = "CheckInDocument",
                 CreatedAt = DateTime.UtcNow
             });
@@ -375,7 +380,7 @@ namespace Staybnb.Controllers
                 _context.Notifications.Add(new Notification
                 {
                     UserId = booking.Property.HostId,
-                    Title = $"Guest has submitted verification documents for Booking #{booking.Id}. Review needed.",
+                    Title = $"Guest submitted verification document for Booking #{booking.Id}".Truncate(100),
                     Type = "CheckInReview",
                     CreatedAt = DateTime.UtcNow,
                     IsRead = false

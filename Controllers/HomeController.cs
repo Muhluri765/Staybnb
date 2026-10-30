@@ -2,11 +2,13 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Staybnb.Data;
 using Staybnb.Models;
+using Staybnb.Models.Enums;
 using Staybnb.ViewModels.Booking;
 using Staybnb.ViewModels.Home;
 
@@ -127,6 +129,7 @@ namespace Staybnb.Controllers
 
         // POST: /Home/AddReview
         [HttpPost]
+        [Authorize(Roles = "Guest")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddReview(int propertyId, int rating, string comment)
         {
@@ -134,6 +137,18 @@ namespace Staybnb.Controllers
             if (string.IsNullOrEmpty(currentUserId))
             {
                 return Challenge();
+            }
+
+            // Ensure the guest has an approved or completed stay at this property
+            var hasStayed = await _context.Bookings.AnyAsync(b =>
+                b.PropertyId == propertyId &&
+                b.GuestId == currentUserId &&
+                (b.Status == BookingStatus.Approved || b.Status == BookingStatus.CheckedIn || b.Status == BookingStatus.Completed));
+
+            if (!hasStayed)
+            {
+                TempData["ErrorMessage"] = "Reviews can only be submitted by guests who have booked and stayed at this property.";
+                return RedirectToAction(nameof(Details), new { id = propertyId });
             }
 
             if (rating < 1 || rating > 5 || string.IsNullOrWhiteSpace(comment))
@@ -153,11 +168,11 @@ namespace Staybnb.Controllers
 
             _context.Reviews.Add(review);
 
-            // Log activity
+            // Log activity with safe truncation
             _context.ActivityLogs.Add(new ActivityLog
             {
                 UserId = currentUserId,
-                Action = $"Added {rating}-star review for property #{propertyId}",
+                Action = $"Added {rating}-star review for property #{propertyId}".Truncate(100),
                 ActivityType = "Review",
                 CreatedAt = DateTime.UtcNow
             });
