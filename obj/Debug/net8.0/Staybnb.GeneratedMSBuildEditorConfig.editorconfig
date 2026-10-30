@@ -1,0 +1,139 @@
+is_global = true
+build_property.TargetFramework = net8.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = Staybnb
+build_property.RootNamespace = Staybnb
+build_property.ProjectDir = /Users/muhluri/Documents/Richfield/PRO 742/Staybnb/
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+build_property.RazorLangVersion = 8.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = /Users/muhluri/Documents/Richfield/PRO 742/Staybnb
+build_property._RazorSourceGeneratorDebug = 
+
+[/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/Views/Account/AccessDenied.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWNjb3VudC9BY2Nlc3NEZW5pZWQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/Views/Account/Login.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWNjb3VudC9Mb2dpbi5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/Views/Account/Register.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWNjb3VudC9SZWdpc3Rlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/Views/Admin/ActivityLogs.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWRtaW4vQWN0aXZpdHlMb2dzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/Views/Admin/ApplicationDetails.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWRtaW4vQXBwbGljYXRpb25EZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/Views/Admin/Applications.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWRtaW4vQXBwbGljYXRpb25zLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/Views/Admin/Dashboard.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWRtaW4vRGFzaGJvYXJkLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/Views/Admin/Users.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWRtaW4vVXNlcnMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/Views/Booking/CheckIn.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQm9va2luZy9DaGVja0luLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/Views/Booking/Checkout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQm9va2luZy9DaGVja291dC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/Views/Booking/Confirmation.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQm9va2luZy9Db25maXJtYXRpb24uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/Views/Booking/MyBookings.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQm9va2luZy9NeUJvb2tpbmdzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/Views/Communication/Conversation.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ29tbXVuaWNhdGlvbi9Db252ZXJzYXRpb24uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/Views/Communication/Inbox.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ29tbXVuaWNhdGlvbi9JbmJveC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/Views/Communication/Notifications.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ29tbXVuaWNhdGlvbi9Ob3RpZmljYXRpb25zLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/Views/Home/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9EZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/Views/Home/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9JbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/Views/Home/Privacy.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9Qcml2YWN5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/Views/Host/ApplicationPending.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9zdC9BcHBsaWNhdGlvblBlbmRpbmcuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/Views/Host/BecomeHost.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9zdC9CZWNvbWVIb3N0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/Views/Host/Bookings.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9zdC9Cb29raW5ncy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/Views/Host/ConfigureCheckIn.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9zdC9Db25maWd1cmVDaGVja0luLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/Views/Host/Dashboard.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9zdC9EYXNoYm9hcmQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/Views/Host/Properties.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9zdC9Qcm9wZXJ0aWVzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/Views/Host/VerifyCheckIn.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9zdC9WZXJpZnlDaGVja0luLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/Views/Shared/_Layout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19MYXlvdXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/Views/Shared/_ValidationScriptsPartial.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/Views/Wishlist/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvV2lzaGxpc3QvSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/Views/_ViewImports.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvX1ZpZXdJbXBvcnRzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/Views/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 

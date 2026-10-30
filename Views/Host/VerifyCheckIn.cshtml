@@ -1,0 +1,124 @@
+@model Staybnb.Models.GuestCheckIn
+
+@{
+    ViewData["Title"] = "Verify Guest ID Check-in";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold mb-0">Guest ID Verification</h2>
+                    <p class="text-muted small">Booking #@Model.BookingId • Property: <strong>@Model.Booking?.Property?.Title</strong></p>
+                </div>
+                <a asp-action="Dashboard" class="btn btn-outline-secondary rounded-pill px-3">
+                    <i class="bi bi-arrow-left me-1"></i> Dashboard
+                </a>
+            </div>
+
+            <!-- Guest & Reservation Summary -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                <h5 class="fw-bold mb-3"><i class="bi bi-person-circle text-primary me-2"></i> Guest Information</h5>
+                <div class="row g-3 small">
+                    <div class="col-md-6">
+                        <span class="text-muted">Full Name:</span>
+                        <div class="fw-bold text-dark fs-6">@Model.Booking?.Guest?.FullName</div>
+                    </div>
+                    <div class="col-md-6">
+                        <span class="text-muted">Email Address:</span>
+                        <div class="fw-semibold text-dark">@Model.Booking?.Guest?.Email</div>
+                    </div>
+                    <div class="col-md-6">
+                        <span class="text-muted">Reservation Dates:</span>
+                        <div class="fw-semibold text-dark">
+                            @Model.Booking?.CheckInDate.ToString("dd MMM yyyy") - @Model.Booking?.CheckOutDate.ToString("dd MMM yyyy")
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <span class="text-muted">Current Verification Status:</span>
+                        <div>
+                            @if (Model.Status == CheckInStatus.Approved)
+                            {
+                                <span class="badge bg-success rounded-pill px-3 py-1">Approved</span>
+                            }
+                            else if (Model.Status == CheckInStatus.InReview)
+                            {
+                                <span class="badge bg-warning text-dark rounded-pill px-3 py-1">In Review (Awaiting Host Action)</span>
+                            }
+                            else if (Model.Status == CheckInStatus.Rejected)
+                            {
+                                <span class="badge bg-danger rounded-pill px-3 py-1">Rejected</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary rounded-pill px-3 py-1">Pending Submission</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Uploaded Documents -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                <h5 class="fw-bold mb-3"><i class="bi bi-file-earmark-check text-success me-2"></i> Uploaded Identification Documents</h5>
+                @if (!Model.GuestDocuments.Any())
+                {
+                    <p class="text-muted small">No documents have been uploaded for this check-in yet.</p>
+                }
+                else
+                {
+                    <div class="list-group list-group-flush border rounded-3 mb-3">
+                        @foreach (var doc in Model.GuestDocuments)
+                        {
+                            <div class="list-group-item p-3 d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center gap-3">
+                                    <i class="bi bi-file-earmark-person fs-2 text-primary"></i>
+                                    <div>
+                                        <div class="fw-bold text-dark">@doc.DocumentType</div>
+                                        <div class="small text-muted">Uploaded: @doc.UploadedAt.ToString("g")</div>
+                                        <span class="badge @(doc.Status == DocumentStatus.Verified ? "bg-success" : (doc.Status == DocumentStatus.Rejected ? "bg-danger" : "bg-warning text-dark")) rounded-pill small">
+                                            @doc.Status
+                                        </span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <a href="@doc.FileName" target="_blank" class="btn btn-outline-dark btn-sm rounded-pill px-3">
+                                        <i class="bi bi-box-arrow-up-right me-1"></i> View / Download Document
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- Verification Action Box -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                <h5 class="fw-bold mb-3">Host Approval Decision</h5>
+                <p class="text-muted small">
+                    Carefully review the guest's identification document against their reservation details. Once approved, the guest will receive an arrival confirmation.
+                </p>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <form asp-action="ApproveGuestCheckIn" asp-route-id="@Model.Id" method="post">
+                            <input type="hidden" name="remarks" value="Identification verified and approved by host." />
+                            <button type="submit" class="btn btn-success w-100 py-2 rounded-pill fw-bold">
+                                <i class="bi bi-check-circle me-1"></i> Approve Check-in & Verify ID
+                            </button>
+                        </form>
+                    </div>
+                    <div class="col-md-6">
+                        <form asp-action="RejectGuestCheckIn" asp-route-id="@Model.Id" method="post">
+                            <input type="hidden" name="remarks" value="Document image is blurry or expired. Please upload a clear photo of your ID." />
+                            <button type="submit" class="btn btn-outline-danger w-100 py-2 rounded-pill fw-bold">
+                                <i class="bi bi-x-circle me-1"></i> Reject & Request Re-upload
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

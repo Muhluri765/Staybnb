@@ -1,0 +1,147 @@
+@model Staybnb.Models.HostApplication
+
+@{
+    ViewData["Title"] = "Review Host Application";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold mb-0">Application Review #@Model.Id</h2>
+                    <p class="text-muted small">Submitted on @Model.AppliedAt.ToString("dd MMMM yyyy HH:mm")</p>
+                </div>
+                <a asp-action="Applications" class="btn btn-outline-secondary rounded-pill px-3">
+                    <i class="bi bi-arrow-left me-1"></i> Back to Queue
+                </a>
+            </div>
+
+            <!-- Rubric Callout Box -->
+            <div class="alert alert-primary border-0 rounded-4 p-4 shadow-sm mb-4">
+                <div class="d-flex align-items-start gap-3">
+                    <i class="bi bi-shield-fill-check fs-2 text-primary"></i>
+                    <div>
+                        <h5 class="fw-bold mb-1">Mutual Exclusivity & Role Evolution Logic</h5>
+                        <p class="small mb-0 opacity-90">
+                            Approving this application enforces the strict university rubric criteria:
+                        </p>
+                        <ol class="small mb-0 mt-2 ps-3">
+                            <li>The system programmatically assigns the <strong>Host</strong> role to <strong>@Model.ApplicationUser?.FullName</strong>.</li>
+                            <li>The system programmatically <strong>removes the Guest role</strong> (user is strictly Guest OR Host, never both).</li>
+                            <li>The property status is switched to <strong>IsActive = true</strong> (visible in public browsing).</li>
+                            <li>The application status transitions to <strong>Approved</strong>.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Applicant Information -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                <h5 class="fw-bold mb-3"><i class="bi bi-person-badge text-secondary me-2"></i> Applicant Profile</h5>
+                <div class="row g-3 small">
+                    <div class="col-md-4">
+                        <span class="text-muted">Applicant Name:</span>
+                        <div class="fw-bold text-dark fs-6">@Model.ApplicationUser?.FullName</div>
+                    </div>
+                    <div class="col-md-4">
+                        <span class="text-muted">Account Email:</span>
+                        <div class="fw-semibold text-dark">@Model.ApplicationUser?.Email</div>
+                    </div>
+                    <div class="col-md-4">
+                        <span class="text-muted">Member Since:</span>
+                        <div class="fw-semibold text-dark">@Model.ApplicationUser?.CreatedAt.ToString("MMM yyyy")</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Property Listing Details -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                <h5 class="fw-bold mb-3"><i class="bi bi-house-door text-danger me-2"></i> Listing Information</h5>
+                <div class="row g-3 mb-3">
+                    <div class="col-md-8">
+                        <span class="text-muted small">Property Title:</span>
+                        <div class="fs-5 fw-bold text-dark">@Model.Property?.Title</div>
+                    </div>
+                    <div class="col-md-4">
+                        <span class="text-muted small">Proposed Price / Night:</span>
+                        <div class="fs-5 fw-bold text-primary">R @Model.Property?.PricePerNight.ToString("N2")</div>
+                    </div>
+                    <div class="col-12">
+                        <span class="text-muted small">Physical Address:</span>
+                        <div class="fw-medium text-dark"><i class="bi bi-geo-alt text-danger me-1"></i> @Model.Property?.Address</div>
+                    </div>
+                    <div class="col-12">
+                        <span class="text-muted small">Description:</span>
+                        <div class="p-3 bg-light rounded-3 text-secondary" style="white-space: pre-line;">@Model.Property?.Description</div>
+                    </div>
+                </div>
+
+                <!-- Photos Preview -->
+                <h6 class="fw-bold mb-2">Mandatory Uploaded Property Photos (@Model.Property?.PropertyImages.Count):</h6>
+                <div class="row g-2 mb-3">
+                    @foreach (var img in Model.Property?.PropertyImages ?? new List<PropertyImage>())
+                    {
+                        <div class="col-md-4">
+                            <img src="@img.ImageUrl" class="rounded-3 w-100 object-fit-cover shadow-sm" style="height: 180px;" />
+                        </div>
+                    }
+                </div>
+
+                <!-- Amenities -->
+                <h6 class="fw-bold mb-2">Amenities:</h6>
+                <div class="d-flex flex-wrap gap-2">
+                    @foreach (var am in Model.Property?.Amenities ?? new List<Amenity>())
+                    {
+                        <span class="badge bg-light text-dark border p-2">
+                            <i class="bi @am.IconClass me-1 text-primary"></i> @am.Name
+                        </span>
+                    }
+                </div>
+            </div>
+
+            <!-- Administrative Decision Actions -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                <h5 class="fw-bold mb-3">Administrator Action</h5>
+
+                @if (Model.Status == ApplicationStatus.Pending)
+                {
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <form asp-action="ApproveApplication" asp-route-id="@Model.Id" method="post">
+                                <div class="mb-3">
+                                    <label class="form-label small fw-semibold">Approval Notes (Optional)</label>
+                                    <input type="text" name="adminNotes" class="form-control" placeholder="Property meets quality standards." />
+                                </div>
+                                <button type="submit" class="btn btn-success w-100 py-3 rounded-pill fw-bold">
+                                    <i class="bi bi-check-circle-fill me-1"></i> Approve Application & Swap Role to Host
+                                </button>
+                            </form>
+                        </div>
+                        <div class="col-md-6">
+                            <form asp-action="RejectApplication" asp-route-id="@Model.Id" method="post">
+                                <div class="mb-3">
+                                    <label class="form-label small fw-semibold">Rejection Reason</label>
+                                    <input type="text" name="adminNotes" class="form-control" placeholder="Photos do not meet verification standards." required />
+                                </div>
+                                <button type="submit" class="btn btn-outline-danger w-100 py-3 rounded-pill fw-bold">
+                                    <i class="bi bi-x-circle-fill me-1"></i> Reject Application
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert @(Model.Status == ApplicationStatus.Approved ? "alert-success" : "alert-danger") rounded-3">
+                        <strong>Decision Status:</strong> This application was marked as <strong>@Model.Status</strong>.
+                        @if (!string.IsNullOrEmpty(Model.AdminNotes))
+                        {
+                            <div class="small mt-1">Notes: @Model.AdminNotes</div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

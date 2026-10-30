@@ -1,0 +1,67 @@
+@model Staybnb.ViewModels.Account.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Create your account";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card border-0 shadow rounded-4 p-4 p-md-5 bg-white">
+                <div class="text-center mb-4">
+                    <i class="bi bi-houses-fill text-danger" style="font-size: 2.5rem;"></i>
+                    <h3 class="fw-bold mt-2">Sign up for Staybnb</h3>
+                    <p class="text-muted small">All new accounts automatically join as <strong>Guest</strong></p>
+                </div>
+
+                <form asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label asp-for="FirstName" class="form-label small fw-semibold text-secondary"></label>
+                            <input asp-for="FirstName" class="form-control rounded-3 py-2" placeholder="First Name" />
+                            <span asp-validation-for="FirstName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-6">
+                            <label asp-for="LastName" class="form-label small fw-semibold text-secondary"></label>
+                            <input asp-for="LastName" class="form-control rounded-3 py-2" placeholder="Last Name" />
+                            <span asp-validation-for="LastName" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label small fw-semibold text-secondary"></label>
+                        <input asp-for="Email" class="form-control rounded-3 py-2" placeholder="name@example.com" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label small fw-semibold text-secondary"></label>
+                        <input asp-for="Password" class="form-control rounded-3 py-2" placeholder="At least 6 characters" />
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="ConfirmPassword" class="form-label small fw-semibold text-secondary"></label>
+                        <input asp-for="ConfirmPassword" class="form-control rounded-3 py-2" placeholder="Confirm password" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-staybnb w-100 py-2 fs-6 mb-3">
+                        Agree and continue
+                    </button>
+
+                    <div class="text-center small text-muted">
+                        Already have an account?
+                        <a asp-action="Login" asp-route-returnurl="@ViewData["ReturnUrl"]" class="text-dark fw-bold text-decoration-none">Log in</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,87 @@
+@model IEnumerable<Staybnb.Models.Notification>
+
+@{
+    ViewData["Title"] = "Notification Center";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold mb-0">Notifications</h2>
+                    <p class="text-muted small">Stay up to date with booking status changes, messages, and approvals.</p>
+                </div>
+                @if (Model.Any(n => !n.IsRead))
+                {
+                    <form asp-action="MarkAllAsRead" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                            <i class="bi bi-check2-all me-1"></i> Mark All as Read
+                        </button>
+                    </form>
+                }
+            </div>
+
+            @if (!Model.Any())
+            {
+                <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white">
+                    <i class="bi bi-bell-slash text-muted fs-1"></i>
+                    <h4 class="fw-bold mt-3">No notifications right now</h4>
+                    <p class="text-muted">You'll receive alerts here when your bookings are confirmed or status updates occur.</p>
+                </div>
+            }
+            else
+            {
+                <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+                    <div class="list-group list-group-flush">
+                        @foreach (var n in Model)
+                        {
+                            <div class="list-group-item p-4 d-flex align-items-start gap-3 @(!n.IsRead ? "bg-light" : "")">
+                                <div class="rounded-circle p-2 d-flex align-items-center justify-content-center flex-shrink-0 @(!n.IsRead ? "bg-danger text-white" : "bg-light text-secondary")" style="width: 44px; height: 44px;">
+                                    @switch (n.Type)
+                                    {
+                                        case "Booking":
+                                        case "BookingRequest":
+                                        case "BookingSubmitted":
+                                            <i class="bi bi-calendar2-check-fill fs-5"></i>
+                                            break;
+                                        case "Application":
+                                        case "ApplicationApproval":
+                                        case "ApplicationRejection":
+                                            <i class="bi bi-card-checklist fs-5"></i>
+                                            break;
+                                        case "Message":
+                                            <i class="bi bi-chat-text-fill fs-5"></i>
+                                            break;
+                                        case "CheckIn":
+                                        case "CheckInReview":
+                                            <i class="bi bi-person-badge-fill fs-5"></i>
+                                            break;
+                                        default:
+                                            <i class="bi bi-bell-fill fs-5"></i>
+                                            break;
+                                    }
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-baseline mb-1">
+                                        <h6 class="fw-bold text-dark mb-0">@n.Title</h6>
+                                        <span class="small text-muted" style="font-size: 0.75rem;">@n.CreatedAt.ToString("MMM dd, HH:mm")</span>
+                                    </div>
+                                    <span class="badge bg-light text-secondary border small">@n.Type</span>
+                                </div>
+                                @if (!n.IsRead)
+                                {
+                                    <form asp-action="MarkAsRead" asp-route-id="@n.Id" method="post" class="flex-shrink-0">
+                                        <button type="submit" class="btn btn-sm btn-link text-decoration-none text-muted" title="Mark as read">
+                                            <i class="bi bi-check-lg fs-5"></i>
+                                        </button>
+                                    </form>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

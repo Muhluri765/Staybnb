@@ -1,0 +1,101 @@
+@model Staybnb.ViewModels.Host.BecomeHostViewModel
+
+@{
+    ViewData["Title"] = "Become a Host - List your space";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header Banner -->
+            <div class="card border-0 bg-dark text-white rounded-4 p-4 p-md-5 mb-4 shadow" style="background: linear-gradient(135deg, #111827 0%, #374151 100%);">
+                <div class="d-flex align-items-center gap-3 mb-2">
+                    <span class="badge bg-danger px-3 py-2 fs-6 rounded-pill">Host Onboarding</span>
+                </div>
+                <h1 class="fw-bold display-6">Earn by hosting on Staybnb</h1>
+                <p class="text-light opacity-75 mb-0" style="max-width: 600px;">
+                    Join our managed community of premier lodging providers. Submit your listing details and property photos below. Once approved by an Administrator, your role will be upgraded to Host and your listing will go live!
+                </p>
+            </div>
+
+            <!-- Application Form -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                <form asp-action="BecomeHost" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <h4 class="fw-bold mb-3 text-dark"><i class="bi bi-info-circle text-primary me-2"></i> 1. Listing Basics</h4>
+
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label fw-semibold"></label>
+                        <input asp-for="Title" class="form-control" placeholder="e.g. Modern Camps Bay Oceanfront Villa" />
+                        <span asp-validation-for="Title" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label fw-semibold"></label>
+                        <textarea asp-for="Description" class="form-control" rows="4" placeholder="Describe the space, scenery, amenities, and what makes your property special..."></textarea>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label asp-for="PricePerNight" class="form-label fw-semibold"></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light fw-bold">R</span>
+                                <input asp-for="PricePerNight" class="form-control" placeholder="1500.00" type="number" step="50" min="50" />
+                            </div>
+                            <span asp-validation-for="PricePerNight" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Address" class="form-label fw-semibold"></label>
+                            <input asp-for="Address" class="form-control" placeholder="e.g. 12 Victoria Rd, Camps Bay, Cape Town" />
+                            <span asp-validation-for="Address" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <h4 class="fw-bold mb-3 text-dark"><i class="bi bi-images text-danger me-2"></i> 2. Mandatory Property Photos</h4>
+                    <div class="alert alert-warning border-0 rounded-3 small mb-3">
+                        <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                        <strong>Rubric Requirement:</strong> An application is strictly considered incomplete and cannot be submitted without at least one property photo. Server-side validation will reject empty photo uploads.
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="ImageFiles" class="form-label fw-semibold"></label>
+                        <input asp-for="ImageFiles" class="form-control form-control-lg" type="file" multiple accept="image/*" required />
+                        <div class="form-text">Upload JPG, PNG, or WEBP photos of the bedrooms, exterior, or living spaces.</div>
+                        <span asp-validation-for="ImageFiles" class="text-danger small"></span>
+                    </div>
+
+                    <hr class="my-4" />
+
+                    <h4 class="fw-bold mb-3 text-dark"><i class="bi bi-check-all text-success me-2"></i> 3. Select Amenities</h4>
+                    <div class="row row-cols-2 row-cols-md-3 g-2 mb-4">
+                        @foreach (var amenity in Model.AvailableAmenities)
+                        {
+                            <div class="col">
+                                <div class="form-check p-2 border rounded-3 bg-light">
+                                    <input class="form-check-input ms-0 me-2" type="checkbox" name="SelectedAmenityIds" value="@amenity.Id" id="amenity_@amenity.Id" />
+                                    <label class="form-check-label fw-medium text-dark" for="amenity_@amenity.Id">
+                                        <i class="bi @amenity.IconClass me-1 text-secondary"></i> @amenity.Name
+                                    </label>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="pt-3 border-top">
+                        <button type="submit" class="btn btn-staybnb btn-lg w-100 py-3 fw-bold">
+                            <i class="bi bi-cloud-upload me-2"></i> Submit Host Application
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

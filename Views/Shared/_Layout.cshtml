@@ -1,0 +1,270 @@
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@inject Staybnb.Data.ApplicationDbContext DbContext
+
+@{
+    int unreadNotificationsCount = 0;
+    if (SignInManager.IsSignedIn(User))
+    {
+        var currentUserId = UserManager.GetUserId(User);
+        if (!string.IsNullOrEmpty(currentUserId))
+        {
+            unreadNotificationsCount = DbContext.Notifications.Count(n => n.UserId == currentUserId && !n.IsRead);
+        }
+    }
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Staybnb</title>
+    <!-- Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <!-- Custom Airbnb-inspired Styles -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="sticky-top">
+        <nav class="navbar navbar-expand-lg navbar-staybnb">
+            <div class="container-fluid px-lg-4">
+                <!-- Brand -->
+                <a class="brand-staybnb" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-houses-fill"></i>
+                    <span>staybnb</span>
+                </a>
+
+                <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarContent">
+                    <!-- Center Links -->
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0 align-items-center">
+                        <li class="nav-item">
+                            <a class="nav-link fw-semibold px-3 text-dark" asp-controller="Home" asp-action="Index">
+                                <i class="bi bi-compass me-1"></i> Explore Stays
+                            </a>
+                        </li>
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            @if (User.IsInRole("Guest"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link fw-semibold px-3 text-dark" asp-controller="Booking" asp-action="MyBookings">
+                                        <i class="bi bi-bag-check me-1"></i> My Trips
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link fw-semibold px-3 text-dark" asp-controller="Wishlist" asp-action="Index">
+                                        <i class="bi bi-heart me-1"></i> Wishlist
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link fw-semibold px-3 text-dark text-primary" asp-controller="Host" asp-action="BecomeHost">
+                                        <i class="bi bi-house-add me-1"></i> Become a Host
+                                    </a>
+                                </li>
+                            }
+                            @if (User.IsInRole("Host"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link fw-semibold px-3 text-dark" asp-controller="Host" asp-action="Dashboard">
+                                        <i class="bi bi-speedometer2 me-1"></i> Host Dashboard
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link fw-semibold px-3 text-dark" asp-controller="Host" asp-action="Properties">
+                                        <i class="bi bi-buildings me-1"></i> Listings
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link fw-semibold px-3 text-dark" asp-controller="Host" asp-action="Bookings">
+                                        <i class="bi bi-calendar2-check me-1"></i> Reservations
+                                    </a>
+                                </li>
+                            }
+                            @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link fw-semibold px-3 text-dark" asp-controller="Admin" asp-action="Dashboard">
+                                        <i class="bi bi-shield-lock me-1"></i> Admin Command Center
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link fw-semibold px-3 text-dark" asp-controller="Admin" asp-action="Applications">
+                                        <i class="bi bi-card-checklist me-1"></i> Applications
+                                    </a>
+                                </li>
+                                @if (User.IsInRole("SuperAdmin"))
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link fw-semibold px-3 text-dark" asp-controller="Admin" asp-action="Users">
+                                            <i class="bi bi-people me-1"></i> User Roles
+                                        </a>
+                                    </li>
+                                }
+                                <li class="nav-item">
+                                    <a class="nav-link fw-semibold px-3 text-dark" asp-controller="Admin" asp-action="ActivityLogs">
+                                        <i class="bi bi-journal-text me-1"></i> System Audit
+                                    </a>
+                                </li>
+                            }
+                        }
+                    </ul>
+
+                    <!-- Right Navigation / Identity -->
+                    <ul class="navbar-nav align-items-center gap-2">
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <!-- Messages -->
+                            <li class="nav-item">
+                                <a class="nav-link position-relative text-dark" asp-controller="Communication" asp-action="Inbox" title="Inbox">
+                                    <i class="bi bi-chat-dots fs-5"></i>
+                                </a>
+                            </li>
+
+                            <!-- Notifications Bell -->
+                            <li class="nav-item">
+                                <a class="nav-link notification-bell" asp-controller="Communication" asp-action="Notifications" title="Notifications">
+                                    <i class="bi bi-bell fs-5"></i>
+                                    @if (unreadNotificationsCount > 0)
+                                    {
+                                        <span class="notification-badge">@unreadNotificationsCount</span>
+                                    }
+                                </a>
+                            </li>
+
+                            <!-- User Profile & Dropdown -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 border rounded-pill px-3 py-1 bg-white text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-list"></i>
+                                    <i class="bi bi-person-circle fs-5 text-secondary"></i>
+                                    <span class="small fw-semibold d-none d-md-inline">@User.Identity?.Name?.Split('@')[0]</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3 mt-2">
+                                    <li class="px-3 py-2 border-bottom">
+                                        <div class="fw-bold">@User.Identity?.Name</div>
+                                        <div class="mt-1">
+                                            @if (User.IsInRole("SuperAdmin"))
+                                            {
+                                                <span class="badge bg-danger badge-role">SuperAdmin</span>
+                                            }
+                                            else if (User.IsInRole("Admin"))
+                                            {
+                                                <span class="badge bg-dark badge-role">Admin</span>
+                                            }
+                                            else if (User.IsInRole("Host"))
+                                            {
+                                                <span class="badge bg-primary badge-role">Host</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-success badge-role">Guest</span>
+                                            }
+                                        </div>
+                                    </li>
+                                    @if (User.IsInRole("Guest"))
+                                    {
+                                        <li><a class="dropdown-item py-2" asp-controller="Booking" asp-action="MyBookings"><i class="bi bi-bag-check me-2"></i>My Trips</a></li>
+                                        <li><a class="dropdown-item py-2" asp-controller="Wishlist" asp-action="Index"><i class="bi bi-heart me-2"></i>Wishlists</a></li>
+                                        <li><a class="dropdown-item py-2 text-primary fw-semibold" asp-controller="Host" asp-action="BecomeHost"><i class="bi bi-house-add me-2"></i>Become a Host</a></li>
+                                    }
+                                    @if (User.IsInRole("Host"))
+                                    {
+                                        <li><a class="dropdown-item py-2" asp-controller="Host" asp-action="Dashboard"><i class="bi bi-speedometer2 me-2"></i>Host Dashboard</a></li>
+                                        <li><a class="dropdown-item py-2" asp-controller="Host" asp-action="Properties"><i class="bi bi-buildings me-2"></i>Manage Listings</a></li>
+                                        <li><a class="dropdown-item py-2" asp-controller="Host" asp-action="Bookings"><i class="bi bi-calendar2-check me-2"></i>Guest Bookings</a></li>
+                                    }
+                                    @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
+                                    {
+                                        <li><a class="dropdown-item py-2" asp-controller="Admin" asp-action="Dashboard"><i class="bi bi-speedometer me-2"></i>Admin Dashboard</a></li>
+                                        <li><a class="dropdown-item py-2" asp-controller="Admin" asp-action="Applications"><i class="bi bi-file-earmark-check me-2"></i>Host Applications</a></li>
+                                        <li><a class="dropdown-item py-2" asp-controller="Admin" asp-action="ActivityLogs"><i class="bi bi-journal-text me-2"></i>Activity Audit</a></li>
+                                    }
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item py-2" asp-controller="Communication" asp-action="Notifications"><i class="bi bi-bell me-2"></i>Notifications</a></li>
+                                    <li><a class="dropdown-item py-2" asp-controller="Communication" asp-action="Inbox"><i class="bi bi-chat-dots me-2"></i>Messages</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <form asp-controller="Account" asp-action="Logout" method="post" class="px-2">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger w-100 rounded-pill">
+                                                <i class="bi bi-box-arrow-right me-1"></i> Sign Out
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link fw-semibold text-dark px-2" asp-controller="Account" asp-action="Login">
+                                    Become a Host
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-outline-staybnb btn-sm px-3" asp-controller="Account" asp-action="Login">
+                                    Log in
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-staybnb btn-sm px-3" asp-controller="Account" asp-action="Register">
+                                    Sign up
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Flash Alert Messages -->
+    <div class="container mt-3">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show rounded-3 shadow-sm" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+    </div>
+
+    <main role="main" class="pb-5">
+        @RenderBody()
+    </main>
+
+    <footer class="mt-auto">
+        <div class="container text-center">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-md-start mb-2 mb-md-0">
+                    <span class="fw-bold text-dark">Staybnb</span> &copy; 2026 - Managed Property Ecosystem.
+                    <span class="badge bg-light text-muted border ms-2">PRO 742 Monolithic MVC</span>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a asp-controller="Home" asp-action="Privacy" class="text-decoration-none text-muted me-3">Privacy & Terms</a>
+                    <span class="text-muted"><i class="bi bi-globe me-1"></i> South Africa (ZAR R)</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Site Scripts -->
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

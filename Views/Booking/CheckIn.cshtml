@@ -1,0 +1,145 @@
+@model Staybnb.ViewModels.Booking.GuestCheckInViewModel
+
+@{
+    ViewData["Title"] = "Guest Check-in & ID Verification";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold mb-0">Guest Check-in Portal</h2>
+                    <p class="text-muted small">Booking #@Model.BookingId • Property: <strong>@Model.PropertyTitle</strong></p>
+                </div>
+                <a asp-action="MyBookings" class="btn btn-outline-secondary rounded-pill px-3">
+                    <i class="bi bi-arrow-left me-1"></i> My Trips
+                </a>
+            </div>
+
+            <!-- Status Banner -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-muted small text-uppercase fw-bold">Verification Status</div>
+                        <h4 class="fw-bold mb-0 mt-1">
+                            @switch (Model.Status)
+                            {
+                                case CheckInStatus.Pending:
+                                    <span class="text-secondary"><i class="bi bi-clock me-1"></i> ID Document Required</span>
+                                    break;
+                                case CheckInStatus.InReview:
+                                    <span class="text-warning"><i class="bi bi-hourglass-split me-1"></i> Under Review by Host</span>
+                                    break;
+                                case CheckInStatus.Approved:
+                                    <span class="text-success"><i class="bi bi-check-circle-fill me-1"></i> Verified & Checked In!</span>
+                                    break;
+                                case CheckInStatus.Rejected:
+                                    <span class="text-danger"><i class="bi bi-x-circle-fill me-1"></i> Document Rejected</span>
+                                    break;
+                            }
+                        </h4>
+                    </div>
+                    <div>
+                        @if (Model.Status == CheckInStatus.Approved)
+                        {
+                            <span class="badge bg-success rounded-pill px-3 py-2 fs-6">Access Granted</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark rounded-pill px-3 py-2 fs-6">Verification Pending</span>
+                        }
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.HostRemarks))
+                {
+                    <div class="alert alert-light border rounded-3 p-3 mt-3 mb-0 small">
+                        <strong>Host Notes:</strong> @Model.HostRemarks
+                    </div>
+                }
+            </div>
+
+            <!-- Check-in Guide & Steps -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                <h5 class="fw-bold mb-3"><i class="bi bi-signpost-2 text-primary me-2"></i> @Model.ProcessTitle</h5>
+                <div class="p-3 bg-light rounded-3 text-secondary small font-monospace mb-3" style="white-space: pre-line;">
+                    @Model.ProcessStepsJson
+                </div>
+                <div class="text-muted small">
+                    <i class="bi bi-info-circle me-1"></i> Once your ID is verified by @Model.HostName, complete arrival access instructions and lockbox combinations will be activated.
+                </div>
+            </div>
+
+            <!-- Upload ID Document Form -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                <h5 class="fw-bold mb-3"><i class="bi bi-upload text-danger me-2"></i> Upload Verification Document</h5>
+                <p class="text-muted small">
+                    In compliance with Staybnb marketplace security and safety standards, upload a clear photo of your government-issued National ID, Driver's License, or Passport.
+                </p>
+
+                <form asp-action="UploadDocument" method="post" enctype="multipart/form-data">
+                    <input type="hidden" asp-for="BookingId" />
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-5">
+                            <label asp-for="DocumentType" class="form-label small fw-semibold"></label>
+                            <select asp-for="DocumentType" class="form-select">
+                                <option value="National Identity Document">National ID Document</option>
+                                <option value="International Passport">Passport</option>
+                                <option value="Driver's License">Driver's License</option>
+                            </select>
+                            <span asp-validation-for="DocumentType" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-7">
+                            <label asp-for="DocumentFile" class="form-label small fw-semibold"></label>
+                            <input asp-for="DocumentFile" class="form-control" type="file" accept=".pdf,image/*" required />
+                            <span asp-validation-for="DocumentFile" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-staybnb rounded-pill px-4">
+                        <i class="bi bi-cloud-arrow-up me-1"></i> Upload Document for Verification
+                    </button>
+                </form>
+            </div>
+
+            <!-- Uploaded Documents History -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                <h5 class="fw-bold mb-3"><i class="bi bi-folder-check text-success me-2"></i> Submitted Verification Files</h5>
+                @if (!Model.UploadedDocuments.Any())
+                {
+                    <p class="text-muted small mb-0">No documents have been uploaded yet. Please use the form above to upload your ID.</p>
+                }
+                else
+                {
+                    <div class="list-group list-group-flush border rounded-3">
+                        @foreach (var doc in Model.UploadedDocuments)
+                        {
+                            <div class="list-group-item p-3 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="fw-bold text-dark">@doc.DocumentType</div>
+                                    <div class="small text-muted">Uploaded: @doc.UploadedAt.ToString("g")</div>
+                                </div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="badge @(doc.Status == DocumentStatus.Verified ? "bg-success" : (doc.Status == DocumentStatus.Rejected ? "bg-danger" : "bg-warning text-dark")) rounded-pill">
+                                        @doc.Status
+                                    </span>
+                                    <a href="@doc.FileName" target="_blank" class="btn btn-sm btn-outline-dark rounded-pill px-3">
+                                        View File
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

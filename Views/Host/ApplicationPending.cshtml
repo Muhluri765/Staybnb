@@ -1,0 +1,32 @@
+@model Staybnb.Models.HostApplication
+
+@{
+    ViewData["Title"] = "Application Pending Review";
+}
+
+<div class="container py-5 text-center">
+    <div class="card border-0 shadow-sm rounded-4 p-5 max-w-lg mx-auto bg-white" style="max-width: 600px;">
+        <div class="mb-3">
+            <i class="bi bi-hourglass-split text-warning" style="font-size: 4rem;"></i>
+        </div>
+        <h3 class="fw-bold">Your Application is Under Review</h3>
+        <p class="text-secondary mt-2">
+            Thank you for applying to host on Staybnb! Your listing <strong>"@Model.Property?.Title"</strong> was submitted on <strong>@Model.AppliedAt.ToString("MMM dd, yyyy")</strong> and is currently in the administrator verification queue.
+        </p>
+
+        <div class="alert alert-light border rounded-3 p-3 my-3 text-start small">
+            <div class="fw-bold mb-1"><i class="bi bi-info-circle text-primary me-1"></i> What happens next?</div>
+            <ul class="mb-0 text-muted ps-3">
+                <li>A Staybnb platform administrator reviews your submitted photos and address.</li>
+                <li>Upon approval, your account role will automatically transition from <strong>Guest</strong> to <strong>Host</strong>.</li>
+                <li>Your listing will be activated and immediately searchable by travelers.</li>
+            </ul>
+        </div>
+
+        <div class="mt-3">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-staybnb rounded-pill px-4">
+                Return to Stays
+            </a>
+        </div>
+    </div>
+</div>

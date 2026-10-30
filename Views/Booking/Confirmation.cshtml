@@ -1,0 +1,62 @@
+@model Staybnb.Models.Booking
+
+@{
+    ViewData["Title"] = "Booking Confirmed";
+}
+
+<div class="container py-5 text-center">
+    <div class="card border-0 shadow-sm rounded-4 p-5 max-w-lg mx-auto bg-white" style="max-width: 650px;">
+        <div class="mb-3">
+            <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+        </div>
+        <h2 class="fw-bold">Reservation Submitted!</h2>
+        <p class="text-secondary mt-1">
+            Booking reference: <strong>#@Model.Id</strong> • Paid: <strong>R @Model.TotalPrice.ToString("N2")</strong>
+        </p>
+
+        <div class="card border rounded-3 p-3 my-4 text-start bg-light">
+            <div class="row g-2 small">
+                <div class="col-sm-6">
+                    <span class="text-muted">Property:</span>
+                    <div class="fw-bold text-dark">@Model.Property?.Title</div>
+                </div>
+                <div class="col-sm-6">
+                    <span class="text-muted">Host:</span>
+                    <div class="fw-bold text-dark">@Model.Property?.Host?.FullName</div>
+                </div>
+                <div class="col-sm-6">
+                    <span class="text-muted">Check-in:</span>
+                    <div class="fw-semibold text-dark">@Model.CheckInDate.ToString("ddd, dd MMM yyyy")</div>
+                </div>
+                <div class="col-sm-6">
+                    <span class="text-muted">Check-out:</span>
+                    <div class="fw-semibold text-dark">@Model.CheckOutDate.ToString("ddd, dd MMM yyyy")</div>
+                </div>
+                <div class="col-12 mt-2 pt-2 border-top d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="text-muted">Reservation Status:</span>
+                        <span class="badge bg-warning text-dark ms-1">@Model.Status</span>
+                    </div>
+                    <div>
+                        <span class="text-muted">Payment:</span>
+                        <span class="badge bg-success ms-1">@Model.Payment?.Status</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="alert alert-info border-0 rounded-3 text-start small mb-4">
+            <div class="fw-bold mb-1"><i class="bi bi-person-vcard text-primary me-1"></i> Check-in Verification Next Step:</div>
+            Once your Host reviews and marks this reservation as <strong>Approved</strong>, you will unlock the check-in portal where you must upload your National ID or Passport to receive property access keys.
+        </div>
+
+        <div class="d-flex justify-content-center gap-2">
+            <a asp-action="MyBookings" class="btn btn-staybnb rounded-pill px-4">
+                View My Trips
+            </a>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">
+                Explore More
+            </a>
+        </div>
+    </div>
+</div>

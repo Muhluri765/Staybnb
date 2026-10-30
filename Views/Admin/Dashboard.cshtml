@@ -1,0 +1,180 @@
+@model Staybnb.ViewModels.Admin.AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Admin Command Center";
+}
+
+<div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <div>
+            <span class="badge bg-danger px-3 py-2 rounded-pill small mb-1">Administrative Oversight</span>
+            <h2 class="fw-bold mb-0">Platform Administration</h2>
+            <p class="text-muted small">Monitor marketplace health, enforce role governance, review host applications, and audit system activities.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Applications" class="btn btn-primary rounded-pill px-3">
+                <i class="bi bi-card-checklist me-1"></i> Review Applications (@Model.PendingApplicationsCount)
+            </a>
+            @if (User.IsInRole("SuperAdmin"))
+            {
+                <a asp-action="Users" class="btn btn-outline-dark rounded-pill px-3">
+                    <i class="bi bi-people me-1"></i> User Roles
+                </a>
+            }
+            <a asp-action="ActivityLogs" class="btn btn-outline-secondary rounded-pill px-3">
+                <i class="bi bi-journal-text me-1"></i> Audit Logs
+            </a>
+        </div>
+    </div>
+
+    <!-- Metrics Cards -->
+    <div class="row row-cols-1 row-cols-md-5 g-3 mb-4">
+        <div class="col">
+            <div class="stat-card">
+                <div>
+                    <div class="text-muted small fw-semibold">Pending Apps</div>
+                    <div class="fs-3 fw-bold text-danger">@Model.PendingApplicationsCount</div>
+                </div>
+                <div class="stat-icon bg-light text-danger">
+                    <i class="bi bi-inbox-fill"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="stat-card">
+                <div>
+                    <div class="text-muted small fw-semibold">Total Users</div>
+                    <div class="fs-3 fw-bold text-dark">@Model.TotalUsersCount</div>
+                </div>
+                <div class="stat-icon bg-light text-primary">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="stat-card">
+                <div>
+                    <div class="text-muted small fw-semibold">Properties</div>
+                    <div class="fs-3 fw-bold text-dark">@Model.TotalPropertiesCount</div>
+                </div>
+                <div class="stat-icon bg-light text-success">
+                    <i class="bi bi-buildings-fill"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="stat-card">
+                <div>
+                    <div class="text-muted small fw-semibold">Bookings</div>
+                    <div class="fs-3 fw-bold text-dark">@Model.TotalBookingsCount</div>
+                </div>
+                <div class="stat-icon bg-light text-info">
+                    <i class="bi bi-calendar2-check-fill"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="stat-card">
+                <div>
+                    <div class="text-muted small fw-semibold">Platform Volume</div>
+                    <div class="fs-3 fw-bold text-warning">R @Model.PlatformRevenue.ToString("N0")</div>
+                </div>
+                <div class="stat-icon bg-light text-warning">
+                    <i class="bi bi-cash-coin"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Pending Applications Section -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 bg-white h-100">
+                <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">
+                        <i class="bi bi-file-earmark-person-fill text-danger me-2"></i> Pending Host Applications
+                    </h5>
+                    <a asp-action="Applications" class="btn btn-sm btn-outline-danger rounded-pill">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    @if (!Model.PendingApplications.Any())
+                    {
+                        <div class="text-center py-5 text-muted">
+                            <i class="bi bi-check2-circle text-success fs-1"></i>
+                            <p class="mt-2 mb-0">No host applications currently awaiting approval.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="list-group list-group-flush">
+                            @foreach (var app in Model.PendingApplications)
+                            {
+                                var img = app.Property?.PropertyImages.FirstOrDefault()?.ImageUrl ?? "https://via.placeholder.com/80";
+                                <div class="list-group-item p-3">
+                                    <div class="d-flex align-items-center justify-content-between mb-2">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <img src="@img" class="rounded-3 object-fit-cover shadow-sm" style="width: 56px; height: 56px;" />
+                                            <div>
+                                                <h6 class="fw-bold mb-0 text-dark">@app.Property?.Title</h6>
+                                                <div class="small text-muted">
+                                                    Applicant: <strong>@app.ApplicationUser?.FullName</strong> (@app.ApplicationUser?.Email)
+                                                </div>
+                                                <div class="small text-muted" style="font-size: 0.75rem;">
+                                                    Submitted: @app.AppliedAt.ToString("MMM dd, yyyy HH:mm")
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="fw-bold text-dark">R @app.Property?.PricePerNight.ToString("N0")</span>
+                                            <div class="small text-muted">/ night</div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-end gap-2 pt-2 border-top">
+                                        <a asp-action="ApplicationDetails" asp-route-id="@app.Id" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                                            Inspect Listing
+                                        </a>
+                                        <form asp-action="ApproveApplication" asp-route-id="@app.Id" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-success rounded-pill px-3">
+                                                <i class="bi bi-check-lg me-1"></i> Approve & Promote Host
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- System Audit Activity Logs Preview -->
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 bg-white h-100">
+                <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">
+                        <i class="bi bi-shield-check text-primary me-2"></i> Recent Activity Logs
+                    </h5>
+                    <a asp-action="ActivityLogs" class="btn btn-sm btn-outline-primary rounded-pill">Full Audit</a>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush small" style="max-height: 480px; overflow-y: auto;">
+                        @foreach (var log in Model.RecentActivityLogs)
+                        {
+                            <div class="list-group-item p-3">
+                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                    <span class="badge bg-light text-dark border">@log.ActivityType</span>
+                                    <span class="text-muted" style="font-size: 0.7rem;">@log.CreatedAt.ToString("g")</span>
+                                </div>
+                                <div class="fw-semibold text-dark">@log.Action</div>
+                                <div class="text-muted" style="font-size: 0.75rem;">
+                                    User: @(log.User?.Email ?? log.UserId)
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

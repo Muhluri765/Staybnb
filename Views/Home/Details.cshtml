@@ -1,0 +1,262 @@
+@model Staybnb.ViewModels.Home.PropertyDetailsViewModel
+
+@{
+    ViewData["Title"] = Model.Property.Title;
+    var primaryImage = Model.Property.PropertyImages.FirstOrDefault()?.ImageUrl ?? "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=1200&q=80";
+    var otherImages = Model.Property.PropertyImages.Skip(1).ToList();
+}
+
+<div class="container py-4">
+    <!-- Header -->
+    <div class="mb-3">
+        <h2 class="fw-bold text-dark">@Model.Property.Title</h2>
+        <div class="d-flex flex-wrap align-items-center justify-content-between text-muted small">
+            <div>
+                <span class="me-3">
+                    <i class="bi bi-star-fill text-warning"></i>
+                    <strong>@(Model.AverageRating > 0 ? Model.AverageRating.ToString("0.0") : "No ratings yet")</strong>
+                    (@Model.Reviews.Count reviews)
+                </span>
+                <span>
+                    <i class="bi bi-geo-alt-fill text-danger me-1"></i>
+                    @Model.Property.Address
+                </span>
+            </div>
+            <div class="mt-2 mt-md-0 d-flex gap-2">
+                <!-- Wishlist Toggle -->
+                <form asp-controller="Wishlist" asp-action="Toggle" method="post" class="d-inline">
+                    <input type="hidden" name="propertyId" value="@Model.Property.Id" />
+                    <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+                    <button type="submit" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                        <i class="bi @(Model.IsInWishlist ? "bi-heart-fill text-danger" : "bi-heart") me-1"></i>
+                        @(Model.IsInWishlist ? "Saved" : "Save")
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Gallery -->
+    <div class="row g-2 mb-4 rounded-4 overflow-hidden" style="max-height: 460px;">
+        <div class="col-md-@(otherImages.Any() ? "8" : "12") h-100">
+            <img src="@primaryImage" alt="@Model.Property.Title" class="w-100 h-100 object-fit-cover rounded-3 shadow-sm" style="min-height: 380px; max-height: 460px;" />
+        </div>
+        @if (otherImages.Any())
+        {
+            <div class="col-md-4 d-flex flex-column gap-2 h-100">
+                @foreach (var img in otherImages.Take(2))
+                {
+                    <img src="@img.ImageUrl" alt="@Model.Property.Title" class="w-100 h-50 object-fit-cover rounded-3 shadow-sm" style="max-height: 225px;" />
+                }
+            </div>
+        }
+    </div>
+
+    <!-- Main Content & Reservation Sidebar -->
+    <div class="row g-5">
+        <!-- Left: Listing Info -->
+        <div class="col-lg-8">
+            <!-- Host profile row -->
+            <div class="d-flex align-items-center justify-content-between pb-4 border-bottom">
+                <div>
+                    <h5 class="fw-bold mb-1">Hosted by @(Model.Property.Host?.FullName ?? "Staybnb Host")</h5>
+                    <p class="text-muted small mb-0">Registered Host • ID Verified</p>
+                </div>
+                <div class="d-flex gap-2 align-items-center">
+                    @if (Model.Property.Host != null)
+                    {
+                        <a asp-controller="Communication" asp-action="Conversation" asp-route-userId="@Model.Property.HostId" class="btn btn-outline-staybnb btn-sm rounded-pill px-3">
+                            <i class="bi bi-chat-dots me-1"></i> Contact Host
+                        </a>
+                    }
+                    <div class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 48px; height: 48px;">
+                        @(Model.Property.Host?.FirstName?.FirstOrDefault() ?? 'H')
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="py-4 border-bottom">
+                <h5 class="fw-bold mb-3">About this space</h5>
+                <p class="text-secondary" style="line-height: 1.7; white-space: pre-line;">@Model.Property.Description</p>
+            </div>
+
+            <!-- Amenities -->
+            <div class="py-4 border-bottom">
+                <h5 class="fw-bold mb-3">What this place offers</h5>
+                @if (Model.Property.Amenities.Any())
+                {
+                    <div class="row row-cols-1 row-cols-md-2 g-3">
+                        @foreach (var amenity in Model.Property.Amenities)
+                        {
+                            <div class="col d-flex align-items-center gap-3">
+                                <i class="bi @amenity.IconClass fs-4 text-secondary"></i>
+                                <span class="fw-medium text-dark">@amenity.Name</span>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">Standard amenities provided.</p>
+                }
+            </div>
+
+            <!-- Check-in Guide Preview -->
+            @if (Model.Property.CheckInProcess != null)
+            {
+                <div class="py-4 border-bottom">
+                    <h5 class="fw-bold mb-2">Check-in Process</h5>
+                    <div class="alert alert-light border rounded-3 p-3">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <i class="bi bi-shield-check text-success fs-5"></i>
+                            <strong>@Model.Property.CheckInProcess.Title</strong>
+                        </div>
+                        <p class="text-muted small mb-0">
+                            Full digital check-in guide and smart access codes are made available immediately once your reservation is approved by the host.
+                        </p>
+                    </div>
+                </div>
+            }
+
+            <!-- Reviews Section -->
+            <div class="py-4">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <h5 class="fw-bold mb-0">
+                        <i class="bi bi-star-fill text-warning me-2"></i>
+                        @(Model.AverageRating > 0 ? Model.AverageRating.ToString("0.0") : "No ratings yet")
+                        <span class="text-muted fw-normal ms-1">(@Model.Reviews.Count reviews)</span>
+                    </h5>
+                </div>
+
+                <!-- Reviews Grid -->
+                @if (Model.Reviews.Any())
+                {
+                    <div class="row row-cols-1 row-cols-md-2 g-4 mb-4">
+                        @foreach (var review in Model.Reviews)
+                        {
+                            <div class="col">
+                                <div class="card h-100 border-0 bg-light rounded-3 p-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center small fw-bold" style="width: 32px; height: 32px;">
+                                                @(review.Reviewer?.FirstName?.FirstOrDefault() ?? 'G')
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold small">@(review.Reviewer?.FullName ?? "Guest")</div>
+                                                <div class="text-muted" style="font-size: 0.75rem;">@review.CreatedAt.ToString("MMM yyyy")</div>
+                                            </div>
+                                        </div>
+                                        <div class="text-warning small">
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                <i class="bi @(i <= review.Rating ? "bi-star-fill" : "bi-star")"></i>
+                                            }
+                                        </div>
+                                    </div>
+                                    <p class="text-secondary small mb-0">@review.Comment</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted mb-4">No reviews yet for this listing. Be the first to review after your stay!</p>
+                }
+
+                <!-- Write a Review Form -->
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    <div class="card border rounded-3 p-4 bg-white shadow-sm mt-3">
+                        <h6 class="fw-bold mb-3">Leave a Review</h6>
+                        <form asp-action="AddReview" method="post">
+                            <input type="hidden" name="propertyId" value="@Model.Property.Id" />
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-semibold">Rating (Stars)</label>
+                                    <select name="rating" class="form-select" required>
+                                        <option value="5" selected>5 - Exceptional</option>
+                                        <option value="4">4 - Very Good</option>
+                                        <option value="3">3 - Average</option>
+                                        <option value="2">2 - Disappointing</option>
+                                        <option value="1">1 - Poor</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-9">
+                                    <label class="form-label small fw-semibold">Your Review</label>
+                                    <input type="text" name="comment" class="form-control" placeholder="Share your experience at this property..." required />
+                                </div>
+                                <div class="col-12 text-end">
+                                    <button type="submit" class="btn btn-dark rounded-pill px-4 btn-sm">
+                                        Submit Review
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Right: Airbnb Booking Card Widget -->
+        <div class="col-lg-4">
+            <div class="card card-staybnb sticky-top shadow border p-4 bg-white" style="top: 100px;">
+                <div class="d-flex justify-content-between align-items-baseline mb-3">
+                    <div>
+                        <span class="fs-4 fw-bold text-dark">R @Model.Property.PricePerNight.ToString("N0")</span>
+                        <span class="text-muted small"> / night</span>
+                    </div>
+                    <div class="small">
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <strong>@(Model.AverageRating > 0 ? Model.AverageRating.ToString("0.0") : "New")</strong>
+                    </div>
+                </div>
+
+                <form asp-controller="Booking" asp-action="Checkout" method="get">
+                    <input type="hidden" name="propertyId" value="@Model.Property.Id" />
+                    <input type="hidden" id="dataPricePerNight" value="@Model.Property.PricePerNight" />
+
+                    <!-- Date Selection Inputs -->
+                    <div class="border rounded-3 p-2 mb-3 bg-light">
+                        <div class="row g-2">
+                            <div class="col-6 border-end">
+                                <label class="form-label small text-muted text-uppercase mb-0" style="font-size: 0.65rem; font-weight: 700;">Check-in</label>
+                                <input type="date" id="calcCheckIn" name="checkInDate" class="form-control form-control-sm border-0 bg-transparent p-0 fw-semibold" value="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" min="@DateTime.Today.ToString("yyyy-MM-dd")" required />
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small text-muted text-uppercase mb-0" style="font-size: 0.65rem; font-weight: 700;">Check-out</label>
+                                <input type="date" id="calcCheckOut" name="checkOutDate" class="form-control form-control-sm border-0 bg-transparent p-0 fw-semibold" value="@DateTime.Today.AddDays(4).ToString("yyyy-MM-dd")" min="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" required />
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-staybnb w-100 py-3 mb-3 fs-6">
+                        Reserve Now
+                    </button>
+                    <p class="text-center text-muted small mb-3">You won't be charged yet</p>
+
+                    <!-- Dynamic Pricing Breakdown -->
+                    <div class="border-top pt-3 small">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-secondary text-decoration-underline">R @Model.Property.PricePerNight.ToString("N0") × <span id="calcNights">3</span> nights</span>
+                            <span class="fw-semibold text-dark" id="calcRoomTotal">R @((Model.Property.PricePerNight * 3).ToString("N2"))</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-secondary text-decoration-underline">Cleaning fee</span>
+                            <span class="fw-semibold text-dark">R 350.00</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span class="text-secondary text-decoration-underline">Staybnb service fee (12%)</span>
+                            <span class="fw-semibold text-dark" id="calcServiceFee">R @((Model.Property.PricePerNight * 3 * 0.12m).ToString("N2"))</span>
+                        </div>
+                        <div class="border-top pt-3 d-flex justify-content-between align-items-center fs-6">
+                            <span class="fw-bold">Total (ZAR)</span>
+                            <span class="fw-bold fs-5 text-dark" id="calcGrandTotal">R @((Model.Property.PricePerNight * 3 + 350.00m + (Model.Property.PricePerNight * 3 * 0.12m)).ToString("N2"))</span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

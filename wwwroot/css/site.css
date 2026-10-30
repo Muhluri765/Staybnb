@@ -1,0 +1,199 @@
+:root {
+    --staybnb-primary: #FF385C;
+    --staybnb-primary-hover: #E00B41;
+    --staybnb-dark: #222222;
+    --staybnb-gray: #717171;
+    --staybnb-light-gray: #F7F7F7;
+    --staybnb-border: #DDDDDD;
+    --staybnb-card-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--staybnb-dark);
+    background-color: #fafafa;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+/* Navbar */
+.navbar-staybnb {
+    background-color: #ffffff;
+    border-bottom: 1px solid var(--staybnb-border);
+    padding: 0.85rem 1.5rem;
+}
+
+.brand-staybnb {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--staybnb-primary) !important;
+    letter-spacing: -0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    text-decoration: none;
+}
+
+.brand-staybnb:hover {
+    color: var(--staybnb-primary-hover) !important;
+}
+
+/* Primary Button */
+.btn-staybnb {
+    background: linear-gradient(to right, #FF385C, #E61E4D);
+    color: #ffffff;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    padding: 0.6rem 1.25rem;
+    transition: all 0.2s ease;
+}
+
+.btn-staybnb:hover {
+    background: linear-gradient(to right, #E00B41, #D70466);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(255, 56, 92, 0.35);
+}
+
+.btn-outline-staybnb {
+    border: 1px solid var(--staybnb-border);
+    color: var(--staybnb-dark);
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 0.6rem 1.25rem;
+    background-color: #ffffff;
+    transition: all 0.2s ease;
+}
+
+.btn-outline-staybnb:hover {
+    border-color: var(--staybnb-dark);
+    background-color: #f7f7f7;
+    color: var(--staybnb-dark);
+}
+
+/* Cards & Aesthetic */
+.card-staybnb {
+    background: #ffffff;
+    border: 1px solid var(--staybnb-border);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-staybnb:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--staybnb-card-shadow);
+}
+
+.property-img-container {
+    position: relative;
+    width: 100%;
+    padding-top: 75%; /* 4:3 Aspect Ratio */
+    overflow: hidden;
+    background-color: #eaeaea;
+}
+
+.property-img-container img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.card-staybnb:hover .property-img-container img {
+    transform: scale(1.04);
+}
+
+.wishlist-heart-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--staybnb-gray);
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease;
+}
+
+.wishlist-heart-btn:hover {
+    transform: scale(1.1);
+    color: var(--staybnb-primary);
+}
+
+.wishlist-heart-btn.active {
+    color: var(--staybnb-primary);
+}
+
+/* Badges */
+.badge-role {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.65rem;
+    font-weight: 600;
+    border-radius: 20px;
+}
+
+/* Stat Cards */
+.stat-card {
+    background: #ffffff;
+    border: 1px solid var(--staybnb-border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+/* Notification Bell */
+.notification-bell {
+    position: relative;
+    font-size: 1.25rem;
+    color: var(--staybnb-dark);
+    padding: 0.4rem;
+}
+
+.notification-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background-color: var(--staybnb-primary);
+    color: #ffffff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    border-radius: 10px;
+    padding: 0.1rem 0.35rem;
+}
+
+/* Footer */
+footer {
+    background-color: #ffffff;
+    border-top: 1px solid var(--staybnb-border);
+    color: var(--staybnb-gray);
+    font-size: 0.875rem;
+    padding: 1.5rem 0;
+}

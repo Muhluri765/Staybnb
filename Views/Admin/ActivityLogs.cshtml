@@ -1,0 +1,111 @@
+@model IEnumerable<Staybnb.Models.ActivityLog>
+
+@{
+    ViewData["Title"] = "System Activity Audit";
+    var types = (List<string>)(ViewBag.Types ?? new List<string>());
+}
+
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <div>
+            <span class="badge bg-secondary px-3 py-2 rounded-pill small mb-1">Compliance & Audit</span>
+            <h2 class="fw-bold mb-0">System Activity Logs</h2>
+            <p class="text-muted small">Tracking authentication events, role changes, host applications, and booking lifecycle transitions.</p>
+        </div>
+        <a asp-action="Dashboard" class="btn btn-outline-secondary rounded-pill px-3">
+            <i class="bi bi-arrow-left me-1"></i> Dashboard
+        </a>
+    </div>
+
+    <!-- Filter Card -->
+    <div class="card border-0 shadow-sm rounded-4 p-3 bg-white mb-4">
+        <form method="get" asp-action="ActivityLogs" class="row g-2 align-items-center">
+            <div class="col-md-5">
+                <input type="text" name="searchUser" value="@ViewBag.SearchUser" class="form-control" placeholder="Search by user email or name..." />
+            </div>
+            <div class="col-md-4">
+                <select name="type" class="form-select">
+                    <option value="">All Activity Types</option>
+                    @foreach (var t in types)
+                    {
+                        if (ViewBag.SelectedType == t)
+                        {
+                            <option value="@t" selected>@t</option>
+                        }
+                        else
+                        {
+                            <option value="@t">@t</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button type="submit" class="btn btn-dark rounded-pill px-4 w-100">
+                    <i class="bi bi-filter me-1"></i> Filter
+                </button>
+                <a asp-action="ActivityLogs" class="btn btn-outline-secondary rounded-pill px-3">Reset</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Logs Table -->
+    <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light small text-uppercase">
+                    <tr>
+                        <th>Timestamp (UTC)</th>
+                        <th>Activity Type</th>
+                        <th>Action Performed</th>
+                        <th>Target User</th>
+                        <th>User ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var log in Model)
+                    {
+                        <tr>
+                            <td class="small text-muted font-monospace">@log.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                            <td>
+                                @switch (log.ActivityType)
+                                {
+                                    case "Auth":
+                                        <span class="badge bg-secondary-subtle text-secondary border">Auth</span>
+                                        break;
+                                    case "Identity":
+                                        <span class="badge bg-success-subtle text-success border">Identity</span>
+                                        break;
+                                    case "RoleChange":
+                                    case "RolePromotion":
+                                    case "RoleDemotion":
+                                        <span class="badge bg-danger-subtle text-danger border">Role Governance</span>
+                                        break;
+                                    case "HostApplication":
+                                    case "AdminReview":
+                                        <span class="badge bg-primary-subtle text-primary border">Application</span>
+                                        break;
+                                    case "Booking":
+                                        <span class="badge bg-warning-subtle text-warning border">Booking</span>
+                                        break;
+                                    case "CheckIn":
+                                    case "CheckInDocument":
+                                        <span class="badge bg-info-subtle text-info border">CheckIn</span>
+                                        break;
+                                    default:
+                                        <span class="badge bg-light text-dark border">@log.ActivityType</span>
+                                        break;
+                                }
+                            </td>
+                            <td class="fw-semibold text-dark">@log.Action</td>
+                            <td>
+                                <div class="small fw-bold">@(log.User?.FullName ?? "System")</div>
+                                <div class="small text-muted">@log.User?.Email</div>
+                            </td>
+                            <td class="small text-muted font-monospace" style="font-size: 0.75rem;">@log.UserId</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

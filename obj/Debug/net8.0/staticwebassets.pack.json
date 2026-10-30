@@ -1,0 +1,29 @@
+{
+  "Files": [
+    {
+      "Id": "/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/wwwroot/css/site.css",
+      "PackagePath": "staticwebassets/css/site.css"
+    },
+    {
+      "Id": "/Users/muhluri/Documents/Richfield/PRO 742/Staybnb/wwwroot/js/site.js",
+      "PackagePath": "staticwebassets/js/site.js"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.Staybnb.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.build.Staybnb.props",
+      "PackagePath": "build\\Staybnb.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.buildMultiTargeting.Staybnb.props",
+      "PackagePath": "buildMultiTargeting\\Staybnb.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.buildTransitive.Staybnb.props",
+      "PackagePath": "buildTransitive\\Staybnb.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

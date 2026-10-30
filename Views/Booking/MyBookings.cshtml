@@ -1,0 +1,113 @@
+@model IEnumerable<Staybnb.Models.Booking>
+
+@{
+    ViewData["Title"] = "My Trips";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">My Trips & Reservations</h2>
+            <p class="text-muted small">Manage your upcoming stays, review approval statuses, and complete check-in ID verifications.</p>
+        </div>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-dark rounded-pill px-3">
+            <i class="bi bi-search me-1"></i> Explore Stays
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white">
+            <i class="bi bi-luggage text-muted fs-1"></i>
+            <h4 class="fw-bold mt-3">No trips booked yet</h4>
+            <p class="text-muted">Time to dust off your bags and start planning your next great getaway.</p>
+            <div>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-staybnb rounded-pill px-4">Start Searching</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-lg-2 g-4">
+            @foreach (var b in Model)
+            {
+                var img = b.Property?.PropertyImages.FirstOrDefault()?.ImageUrl ?? "https://via.placeholder.com/150";
+                <div class="col">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100 d-flex flex-column">
+                        <div class="d-flex gap-3 mb-3">
+                            <img src="@img" class="rounded-3 object-fit-cover shadow-sm" style="width: 100px; height: 100px;" />
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h5 class="fw-bold mb-1 text-dark">@b.Property?.Title</h5>
+                                    @switch (b.Status)
+                                    {
+                                        case BookingStatus.Pending:
+                                            <span class="badge bg-warning text-dark rounded-pill px-3 py-1">Pending Approval</span>
+                                            break;
+                                        case BookingStatus.Approved:
+                                            <span class="badge bg-success rounded-pill px-3 py-1">Approved</span>
+                                            break;
+                                        case BookingStatus.CheckedIn:
+                                            <span class="badge bg-info text-dark rounded-pill px-3 py-1">Checked In</span>
+                                            break;
+                                        case BookingStatus.Completed:
+                                            <span class="badge bg-primary rounded-pill px-3 py-1">Completed</span>
+                                            break;
+                                        case BookingStatus.Rejected:
+                                            <span class="badge bg-danger rounded-pill px-3 py-1">Rejected</span>
+                                            break;
+                                        case BookingStatus.Cancelled:
+                                            <span class="badge bg-secondary rounded-pill px-3 py-1">Cancelled</span>
+                                            break;
+                                    }
+                                </div>
+                                <p class="text-muted small mb-1"><i class="bi bi-geo-alt me-1 text-danger"></i> @b.Property?.Address</p>
+                                <div class="small text-muted">Host: <strong>@b.Property?.Host?.FullName</strong></div>
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-light rounded-3 small mb-3">
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <span class="text-muted">Dates:</span>
+                                    <div class="fw-semibold text-dark">@b.CheckInDate.ToString("dd MMM") - @b.CheckOutDate.ToString("dd MMM yyyy")</div>
+                                </div>
+                                <div class="col-6">
+                                    <span class="text-muted">Total Paid:</span>
+                                    <div class="fw-bold text-primary">R @b.TotalPrice.ToString("N2")</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action row -->
+                        <div class="mt-auto pt-3 border-top d-flex justify-content-between align-items-center">
+                            @if (b.Property?.Host != null)
+                            {
+                                <a asp-controller="Communication" asp-action="Conversation" asp-route-userId="@b.Property.HostId" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                                    <i class="bi bi-chat-text me-1"></i> Message Host
+                                </a>
+                            }
+                            else
+                            {
+                                <span></span>
+                            }
+
+                            <!-- Check-in Workflow Button: Only when booking is Approved -->
+                            @if (b.Status == BookingStatus.Approved || b.Status == BookingStatus.CheckedIn)
+                            {
+                                <a asp-action="CheckIn" asp-route-bookingId="@b.Id" class="btn btn-sm btn-staybnb rounded-pill px-3">
+                                    <i class="bi bi-person-vcard me-1"></i>
+                                    @(b.GuestCheckIn?.Status == CheckInStatus.Approved ? "View Check-in Guide" : "Complete Check-in ID Upload")
+                                </a>
+                            }
+                            else if (b.Status == BookingStatus.Pending)
+                            {
+                                <span class="badge bg-light text-muted border p-2">Check-in unlocks upon host approval</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

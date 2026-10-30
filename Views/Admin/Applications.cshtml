@@ -1,0 +1,115 @@
+@model IEnumerable<Staybnb.Models.HostApplication>
+
+@{
+    ViewData["Title"] = "Host Applications";
+    var selectedStatus = (ApplicationStatus?)ViewBag.SelectedStatus;
+}
+
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">Host Applications Queue</h2>
+            <p class="text-muted small">Review host listing applications, verify compliance, and grant Host permissions.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Dashboard" class="btn btn-outline-secondary rounded-pill px-3">
+                <i class="bi bi-arrow-left me-1"></i> Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Status Tabs -->
+    <ul class="nav nav-pills mb-4 gap-2">
+        <li class="nav-item">
+            <a class="nav-link rounded-pill @(selectedStatus == null ? "active bg-dark" : "bg-light text-dark")" asp-action="Applications">
+                All Applications
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link rounded-pill @(selectedStatus == ApplicationStatus.Pending ? "active bg-warning text-dark" : "bg-light text-dark")" asp-action="Applications" asp-route-status="@ApplicationStatus.Pending">
+                Pending Approval
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link rounded-pill @(selectedStatus == ApplicationStatus.Approved ? "active bg-success text-white" : "bg-light text-dark")" asp-action="Applications" asp-route-status="@ApplicationStatus.Approved">
+                Approved
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link rounded-pill @(selectedStatus == ApplicationStatus.Rejected ? "active bg-danger text-white" : "bg-light text-dark")" asp-action="Applications" asp-route-status="@ApplicationStatus.Rejected">
+                Rejected
+            </a>
+        </li>
+    </ul>
+
+    @if (!Model.Any())
+    {
+        <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white">
+            <i class="bi bi-inbox text-muted fs-1"></i>
+            <h5 class="fw-bold mt-3">No applications found in this category</h5>
+        </div>
+    }
+    else
+    {
+        <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light small text-uppercase">
+                        <tr>
+                            <th>Listing Preview</th>
+                            <th>Applicant</th>
+                            <th>Submitted Date</th>
+                            <th>Price / Night</th>
+                            <th>Status</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var app in Model)
+                        {
+                            var img = app.Property?.PropertyImages.FirstOrDefault()?.ImageUrl ?? "https://via.placeholder.com/80";
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <img src="@img" class="rounded-3 object-fit-cover shadow-sm" style="width: 60px; height: 60px;" />
+                                        <div>
+                                            <div class="fw-bold text-dark">@app.Property?.Title</div>
+                                            <div class="small text-muted">@app.Property?.Address</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="fw-semibold">@app.ApplicationUser?.FullName</div>
+                                    <div class="small text-muted">@app.ApplicationUser?.Email</div>
+                                </td>
+                                <td class="small text-muted">@app.AppliedAt.ToString("MMM dd, yyyy HH:mm")</td>
+                                <td>
+                                    <span class="fw-bold">R @app.Property?.PricePerNight.ToString("N2")</span>
+                                </td>
+                                <td>
+                                    @switch (app.Status)
+                                    {
+                                        case ApplicationStatus.Pending:
+                                            <span class="badge bg-warning text-dark rounded-pill px-3 py-1">Pending</span>
+                                            break;
+                                        case ApplicationStatus.Approved:
+                                            <span class="badge bg-success rounded-pill px-3 py-1">Approved</span>
+                                            break;
+                                        case ApplicationStatus.Rejected:
+                                            <span class="badge bg-danger rounded-pill px-3 py-1">Rejected</span>
+                                            break;
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    <a asp-action="ApplicationDetails" asp-route-id="@app.Id" class="btn btn-sm btn-outline-dark rounded-pill px-3">
+                                        Review Details
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

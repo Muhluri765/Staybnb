@@ -1,0 +1,97 @@
+@model IEnumerable<Staybnb.Models.HostProperty>
+
+@{
+    ViewData["Title"] = "Manage Listings";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">My Property Listings</h2>
+            <p class="text-muted small">Manage visibility, pricing, and custom check-in guidelines for each space.</p>
+        </div>
+        <a asp-action="BecomeHost" class="btn btn-staybnb rounded-pill px-3">
+            <i class="bi bi-plus-lg me-1"></i> Add Another Listing
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white">
+            <i class="bi bi-building-add text-muted fs-1"></i>
+            <h5 class="fw-bold mt-3">You don't have any properties yet</h5>
+            <p class="text-muted">Apply with your first property to start hosting travelers on Staybnb.</p>
+            <div>
+                <a asp-action="BecomeHost" class="btn btn-staybnb rounded-pill px-4">Create Listing</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light small text-uppercase">
+                        <tr>
+                            <th>Property</th>
+                            <th>Location</th>
+                            <th>Nightly Rate</th>
+                            <th>Visibility Status</th>
+                            <th>Check-in Configuration</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var property in Model)
+                        {
+                            var imgUrl = property.PropertyImages.FirstOrDefault()?.ImageUrl ?? "https://via.placeholder.com/120";
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <img src="@imgUrl" class="rounded-3 object-fit-cover shadow-sm" style="width: 70px; height: 70px;" />
+                                        <div>
+                                            <h6 class="fw-bold mb-1 text-dark">@property.Title</h6>
+                                            <span class="badge bg-light text-secondary border">@property.Amenities.Count Amenities</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="small text-muted" style="max-width: 250px;">
+                                    <i class="bi bi-geo-alt me-1 text-danger"></i> @property.Address
+                                </td>
+                                <td>
+                                    <span class="fw-bold fs-6">R @property.PricePerNight.ToString("N2")</span>
+                                </td>
+                                <td>
+                                    @if (property.IsActive)
+                                    {
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1">
+                                            <i class="bi bi-check-circle me-1"></i> Active (Live)
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle rounded-pill px-3 py-1">
+                                            <i class="bi bi-eye-slash me-1"></i> Inactive (Hidden)
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    <a asp-action="ConfigureCheckIn" asp-route-propertyId="@property.Id" class="btn btn-sm btn-outline-dark rounded-pill px-3">
+                                        <i class="bi bi-sliders me-1"></i> Configure Check-in
+                                    </a>
+                                </td>
+                                <td class="text-end">
+                                    <form asp-action="ToggleActive" asp-route-id="@property.Id" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm @(property.IsActive ? "btn-outline-warning" : "btn-success") rounded-pill px-3">
+                                            @(property.IsActive ? "Pause Listing" : "Activate Listing")
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

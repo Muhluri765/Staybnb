@@ -1,0 +1,144 @@
+@model IEnumerable<Staybnb.Models.Booking>
+
+@{
+    ViewData["Title"] = "Guest Reservations";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">Guest Reservations</h2>
+            <p class="text-muted small">Review incoming reservation requests, approve stays, and monitor check-ins.</p>
+        </div>
+        <a asp-action="Dashboard" class="btn btn-outline-secondary rounded-pill px-3">
+            <i class="bi bi-arrow-left me-1"></i> Dashboard
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white">
+            <i class="bi bi-calendar-x text-muted fs-1"></i>
+            <h5 class="fw-bold mt-3">No bookings yet</h5>
+            <p class="text-muted">Once guests reserve your spaces, their requests will appear here for your approval.</p>
+        </div>
+    }
+    else
+    {
+        <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light small text-uppercase">
+                        <tr>
+                            <th>Booking #</th>
+                            <th>Property</th>
+                            <th>Guest</th>
+                            <th>Stay Dates</th>
+                            <th>Payout (ZAR)</th>
+                            <th>Status</th>
+                            <th>Check-in ID</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var b in Model)
+                        {
+                            <tr>
+                                <td class="fw-bold">#@b.Id</td>
+                                <td>
+                                    <div class="fw-semibold text-dark">@b.Property?.Title</div>
+                                    <div class="small text-muted">@b.Property?.Address</div>
+                                </td>
+                                <td>
+                                    <div class="fw-medium">@b.Guest?.FullName</div>
+                                    <div class="small text-muted">@b.Guest?.Email</div>
+                                    <a asp-controller="Communication" asp-action="Conversation" asp-route-userId="@b.GuestId" class="small text-decoration-none">
+                                        <i class="bi bi-chat-text me-1"></i> Message
+                                    </a>
+                                </td>
+                                <td class="small">
+                                    <div><strong>In:</strong> @b.CheckInDate.ToString("dd MMM yyyy")</div>
+                                    <div><strong>Out:</strong> @b.CheckOutDate.ToString("dd MMM yyyy")</div>
+                                    <span class="badge bg-light text-secondary border">@b.Nights nights</span>
+                                </td>
+                                <td>
+                                    <span class="fw-bold fs-6 text-primary">R @b.TotalPrice.ToString("N2")</span>
+                                    <div class="small text-muted">Paid: @(b.Payment?.Status == PaymentStatus.Completed ? "Yes" : "No")</div>
+                                </td>
+                                <td>
+                                    @switch (b.Status)
+                                    {
+                                        case BookingStatus.Pending:
+                                            <span class="badge bg-warning text-dark rounded-pill px-3 py-1">Pending Approval</span>
+                                            break;
+                                        case BookingStatus.Approved:
+                                            <span class="badge bg-success rounded-pill px-3 py-1">Approved</span>
+                                            break;
+                                        case BookingStatus.CheckedIn:
+                                            <span class="badge bg-info text-dark rounded-pill px-3 py-1">Checked In</span>
+                                            break;
+                                        case BookingStatus.Completed:
+                                            <span class="badge bg-primary rounded-pill px-3 py-1">Completed</span>
+                                            break;
+                                        case BookingStatus.Rejected:
+                                            <span class="badge bg-danger rounded-pill px-3 py-1">Rejected</span>
+                                            break;
+                                        case BookingStatus.Cancelled:
+                                            <span class="badge bg-secondary rounded-pill px-3 py-1">Cancelled</span>
+                                            break;
+                                    }
+                                </td>
+                                <td>
+                                    @if (b.GuestCheckIn != null)
+                                    {
+                                        if (b.GuestCheckIn.Status == CheckInStatus.Approved)
+                                        {
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">
+                                                <i class="bi bi-patch-check-fill me-1"></i> ID Verified
+                                            </span>
+                                        }
+                                        else if (b.GuestCheckIn.Status == CheckInStatus.InReview)
+                                        {
+                                            <a asp-action="VerifyCheckIn" asp-route-id="@b.GuestCheckIn.Id" class="btn btn-sm btn-outline-primary rounded-pill px-2 py-0">
+                                                Review Document
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted small">@b.GuestCheckIn.Status</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">Not initiated</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    @if (b.Status == BookingStatus.Pending)
+                                    {
+                                        <div class="d-flex justify-content-end gap-1">
+                                            <form asp-action="ApproveBooking" asp-route-id="@b.Id" method="post" class="d-inline">
+                                                <button type="submit" class="btn btn-sm btn-success rounded-pill px-2">
+                                                    Approve
+                                                </button>
+                                            </form>
+                                            <form asp-action="RejectBooking" asp-route-id="@b.Id" method="post" class="d-inline">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-2">
+                                                    Reject
+                                                </button>
+                                            </form>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">No action needed</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

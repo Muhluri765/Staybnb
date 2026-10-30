@@ -1,0 +1,26 @@
+@{
+    ViewData["Title"] = "Privacy Policy & Platform Standards";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <h2 class="fw-bold mb-4">Privacy Policy & Guest Verification Standards</h2>
+            <p class="text-secondary">
+                At Staybnb, we take marketplace security, guest verification, and host safety seriously.
+            </p>
+            <div class="card border-0 shadow-sm p-4 rounded-3 mb-4">
+                <h5 class="fw-bold"><i class="bi bi-shield-lock-fill text-primary me-2"></i> Document Verification Security</h5>
+                <p class="text-muted small">
+                    All guest identification documents (National ID or Passport) submitted during check-in are stored securely in local protected directories (<span class="font-monospace">wwwroot/uploads/documents/</span>) and are only accessible by the assigned listing host and system administrators for identity verification.
+                </p>
+            </div>
+            <div class="card border-0 shadow-sm p-4 rounded-3">
+                <h5 class="fw-bold"><i class="bi bi-person-badge-fill text-success me-2"></i> Role Governance & Integrity</h5>
+                <p class="text-muted small">
+                    Our platform strictly enforces role segregation (Guest vs. Host) through administrator-approved workflows. All actions, logins, status transitions, and role modifications are captured transparently in the immutable system ActivityLog.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

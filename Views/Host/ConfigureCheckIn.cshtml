@@ -1,0 +1,59 @@
+@model Staybnb.ViewModels.Host.CheckInProcessViewModel
+
+@{
+    ViewData["Title"] = "Configure Check-in Process";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold mb-0">Configure Check-in Process</h2>
+                    <p class="text-muted small">Property: <strong>@Model.PropertyTitle</strong></p>
+                </div>
+                <a asp-action="Properties" class="btn btn-outline-secondary rounded-pill px-3">
+                    <i class="bi bi-arrow-left me-1"></i> Back to Listings
+                </a>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                <form asp-action="ConfigureCheckIn" method="post">
+                    <input type="hidden" asp-for="PropertyId" />
+                    <input type="hidden" asp-for="PropertyTitle" />
+
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label fw-semibold"></label>
+                        <input asp-for="Title" class="form-control" placeholder="e.g. Camps Bay Villa Smart Check-in Guide" required />
+                        <span asp-validation-for="Title" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="StepsJson" class="form-label fw-semibold">Check-in Steps & Security Instructions</label>
+                        <textarea asp-for="StepsJson" class="form-control font-monospace small" rows="8" placeholder='[{"step": 1, "title": "Security Check", "instruction": "Show ID at main gate"}, {"step": 2, "title": "Smart Lock", "instruction": "Keypad code 4921#"}]' required></textarea>
+                        <div class="form-text">
+                            Enter instructions for your guests (structured JSON or clear step-by-step instructions).
+                        </div>
+                        <span asp-validation-for="StepsJson" class="text-danger small"></span>
+                    </div>
+
+                    <div class="alert alert-info border-0 rounded-3 small mb-4">
+                        <i class="bi bi-shield-check text-primary me-2"></i>
+                        <strong>Rubric Compliance:</strong> When a booking is approved, guests are prompted to complete this multi-step check-in workflow and upload their government-issued ID or passport before keycode distribution.
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a asp-action="Properties" class="btn btn-outline-secondary rounded-pill px-4">Cancel</a>
+                        <button type="submit" class="btn btn-staybnb rounded-pill px-4">
+                            Save Check-in Policy
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,128 @@
+@model Staybnb.ViewModels.Booking.BookingCheckoutViewModel
+
+@{
+    ViewData["Title"] = "Confirm and Pay";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="mb-4">
+                <a asp-controller="Home" asp-action="Details" asp-route-id="@Model.PropertyId" class="text-decoration-none text-muted small">
+                    <i class="bi bi-chevron-left me-1"></i> Back to property
+                </a>
+                <h2 class="fw-bold mt-2">Confirm and Pay</h2>
+            </div>
+
+            <div class="row g-5">
+                <!-- Left: Trip Details & Payment Details -->
+                <div class="col-md-7">
+                    <form asp-action="ConfirmBooking" method="post">
+                        <input type="hidden" asp-for="PropertyId" />
+                        <input type="hidden" asp-for="PricePerNight" />
+                        <input type="hidden" asp-for="CleaningFee" />
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                        <!-- Trip Dates -->
+                        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                            <h5 class="fw-bold mb-3"><i class="bi bi-calendar2-range text-danger me-2"></i> Your Trip</h5>
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <label asp-for="CheckInDate" class="form-label small fw-semibold text-secondary"></label>
+                                    <input asp-for="CheckInDate" class="form-control" type="date" required />
+                                    <span asp-validation-for="CheckInDate" class="text-danger small"></span>
+                                </div>
+                                <div class="col-6">
+                                    <label asp-for="CheckOutDate" class="form-label small fw-semibold text-secondary"></label>
+                                    <input asp-for="CheckOutDate" class="form-control" type="date" required />
+                                    <span asp-validation-for="CheckOutDate" class="text-danger small"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Method -->
+                        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                            <h5 class="fw-bold mb-3"><i class="bi bi-credit-card-2-front text-primary me-2"></i> Payment Details</h5>
+                            <div class="p-3 border rounded-3 bg-light mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="fw-bold text-dark"><i class="bi bi-shield-check text-success me-1"></i> Instant Secure Checkout</span>
+                                    <span class="badge bg-success">Simulated Card</span>
+                                </div>
+                                <div class="small text-muted">
+                                    Payment will be recorded directly to the SQL <span class="font-monospace">Payment</span> table linked 1:1 with your reservation.
+                                </div>
+                            </div>
+
+                            <div class="row g-2">
+                                <div class="col-12">
+                                    <label class="form-label small fw-semibold text-secondary">Cardholder Name</label>
+                                    <input type="text" class="form-control" value="Demo Traveler" required />
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label small fw-semibold text-secondary">Card Number</label>
+                                    <input type="text" class="form-control" value="•••• •••• •••• 4242" required />
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small fw-semibold text-secondary">Expiry</label>
+                                    <input type="text" class="form-control" value="12/28" required />
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small fw-semibold text-secondary">CVV</label>
+                                    <input type="text" class="form-control" value="382" required />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Check-in Policy Notice -->
+                        <div class="alert alert-warning border-0 rounded-3 small mb-4">
+                            <i class="bi bi-info-circle-fill me-1"></i>
+                            <strong>Check-in Requirement:</strong> Once your host confirms this booking, you will be required to upload your National ID or Passport to unlock check-in arrival codes.
+                        </div>
+
+                        <button type="submit" class="btn btn-staybnb btn-lg w-100 py-3 fw-bold">
+                            <i class="bi bi-lock-fill me-1"></i> Confirm and Pay (R @Model.TotalPrice.ToString("N2"))
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Right: Pricing Breakdown Summary -->
+                <div class="col-md-5">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white sticky-top" style="top: 100px;">
+                        <div class="d-flex align-items-center gap-3 pb-3 border-bottom mb-3">
+                            <img src="@(Model.PropertyImageUrl ?? "https://via.placeholder.com/100")" class="rounded-3 object-fit-cover shadow-sm" style="width: 80px; height: 80px;" />
+                            <div>
+                                <h6 class="fw-bold mb-1 text-dark">@Model.PropertyTitle</h6>
+                                <p class="text-muted small mb-0"><i class="bi bi-geo-alt me-1 text-danger"></i> @Model.PropertyAddress</p>
+                                <span class="badge bg-light text-dark border small mt-1">Hosted by @Model.HostName</span>
+                            </div>
+                        </div>
+
+                        <h6 class="fw-bold mb-3">Price Details (Rubric Formula)</h6>
+                        <div class="d-flex justify-content-between mb-2 small">
+                            <span class="text-secondary">R @Model.PricePerNight.ToString("N2") × @Model.Nights nights</span>
+                            <span class="fw-semibold">R @Model.RoomTotal.ToString("N2")</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2 small">
+                            <span class="text-secondary">Fixed Cleaning fee</span>
+                            <span class="fw-semibold">R @Model.CleaningFee.ToString("N2")</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3 small">
+                            <span class="text-secondary">Service fee (12% of rate)</span>
+                            <span class="fw-semibold">R @Model.ServiceFee.ToString("N2")</span>
+                        </div>
+
+                        <div class="border-top pt-3 d-flex justify-content-between align-items-center">
+                            <span class="fw-bold fs-6">Total Due (ZAR)</span>
+                            <span class="fw-bold fs-4 text-primary">R @Model.TotalPrice.ToString("N2")</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
